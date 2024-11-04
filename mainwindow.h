@@ -1,6 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
+//EZME
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
