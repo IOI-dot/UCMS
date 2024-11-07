@@ -15,6 +15,9 @@ public:
     explicit Student_Registeration(QWidget *parent = nullptr);
     ~Student_Registeration();
 
+private slots:
+    void on_sign_up_pushButton_clicked();
+
 private:
     Ui::Student_Registeration *ui;
 };

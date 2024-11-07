@@ -10,24 +10,48 @@ CONFIG += c++17
 
 SOURCES += \
     admin.cpp \
+    admin_course_management.cpp \
+    admin_event_management.cpp \
+    admin_homepage.cpp \
     admin_login.cpp \
+    admin_student_management.cpp \
     main.cpp \
     mainwindow.cpp \
     student.cpp \
+    student_academic_profile.cpp \
+    student_course_registration.cpp \
+    student_event_registration.cpp \
+    student_homepage.cpp \
     student_login.cpp \
     student_registeration.cpp
 
 HEADERS += \
     admin.h \
+    admin_course_management.h \
+    admin_event_management.h \
+    admin_homepage.h \
     admin_login.h \
+    admin_student_management.h \
     mainwindow.h \
     student.h \
+    student_academic_profile.h \
+    student_course_registration.h \
+    student_event_registration.h \
+    student_homepage.h \
     student_login.h \
     student_registeration.h
 
 FORMS += \
+    admin_course_management.ui \
+    admin_event_management.ui \
+    admin_homepage.ui \
     admin_login.ui \
+    admin_student_management.ui \
     mainwindow.ui \
+    student_academic_profile.ui \
+    student_course_registration.ui \
+    student_event_registration.ui \
+    student_homepage.ui \
     student_login.ui \
     student_registeration.ui
 
