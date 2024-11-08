@@ -1,0 +1,11 @@
+debug/admin.o
+debug/admin_login.o
+debug/main.o
+debug/mainwindow.o
+debug/student.o
+debug/student_login.o
+debug/student_registeration.o
+debug/moc_admin_login.o
+debug/moc_mainwindow.o
+debug/moc_student_login.o
+debug/moc_student_registeration.o

@@ -1,0 +1,11 @@
+release/admin.o
+release/admin_login.o
+release/main.o
+release/mainwindow.o
+release/student.o
+release/student_login.o
+release/student_registeration.o
+release/moc_admin_login.o
+release/moc_mainwindow.o
+release/moc_student_login.o
+release/moc_student_registeration.o
