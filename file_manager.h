@@ -10,7 +10,7 @@ class File_Manager
 {
 public:
     //Constructor
-    File_Manager(const QString& coursePath, const QString& studentPath, const QString& eventPath);
+    File_Manager(const QString& cPath, const QString& sPath, const QString& ePath);
     // Course
     QVector<Course> loadCourseData(); //LOAD
     void saveCourseData(const QVector<Course>& courses); //SAVE
@@ -24,9 +24,9 @@ public:
     void saveEventData(const QVector<Event>& events); //SAVE
 
 private:
-    QString courseFilePath; //FILE PATHS!!!!!
-    QString studentFilePath;
-    QString eventFilePath;
+    QString CourseFilePath; //FILE PATHS!!!!!
+    QString StudentFilePath;
+    QString EventFilePath;
 };
 
 #endif // FILE_MANAGER_H

@@ -2,14 +2,14 @@
 #include <QFile> //FOR OPENNIGN AND READING FILES
 #include <QTextStream> //FOR SAVING STRINGS ON FILES
 #include <QDebug> // DEBUGGING ANY BAD THING
-File_Manager::File_Manager(const QString& coursePath, const QString& studentPath, const QString& eventPath) {//NEED MORE CONSTRUCTORS
-    courseFilePath=coursePath;
-    studentFilePath=studentPath;
-    eventFilePath=eventPath;
+File_Manager::File_Manager(const QString& cPath, const QString& sPath, const QString& ePath) {//NEED MORE CONSTRUCTORS
+    CourseFilePath=cPath;
+    StudentFilePath=sPath;
+    EventFilePath=ePath;
 }
 QVector<Course> File_Manager::loadCourseData(){
     QVector<Course> courses;
-    QFile file(courseFilePath); //OPEN THE FILE GIVEN
+    QFile file(CourseFilePath); //OPEN THE FILE GIVEN
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) { //DEBUGGING METHOD
         qWarning() << "error,could not open course file!!";
         return courses;
@@ -27,7 +27,7 @@ QVector<Course> File_Manager::loadCourseData(){
     return courses;
 }
 void File_Manager::saveCourseData(const QVector<Course>& courses) {
-    QFile file(courseFilePath);
+    QFile file(CourseFilePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qWarning() << "error,could not open course file!!";
         return;
@@ -41,7 +41,7 @@ void File_Manager::saveCourseData(const QVector<Course>& courses) {
 }
 QVector<Student> File_Manager::loadStudentData() {
     QVector<Student> students;
-    QFile file(studentFilePath);
+    QFile file(StudentFilePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning() << "error,could not open course file!!";
         return students;
@@ -59,7 +59,7 @@ QVector<Student> File_Manager::loadStudentData() {
     return students;
 }
 void File_Manager::saveStudentData(const QVector<Student>& students) {
-    QFile file(studentFilePath);
+    QFile file(StudentFilePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qWarning() << "error,could not open course file!!";
         return;
@@ -75,7 +75,7 @@ void File_Manager::saveStudentData(const QVector<Student>& students) {
 // Load Event Data
 QVector<Event> File_Manager::loadEventData() {
     QVector<Event> events;
-    QFile file(eventFilePath);
+    QFile file(EventFilePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning() << "error,could not open course file!!";
         return events;
@@ -96,7 +96,7 @@ QVector<Event> File_Manager::loadEventData() {
 
 
 void File_Manager::saveEventData(const QVector<Event>& events) {
-    QFile file(eventFilePath);
+    QFile file(EventFilePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qWarning() << "EROR";
         return;
