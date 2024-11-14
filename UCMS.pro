@@ -45,7 +45,8 @@ HEADERS += \
     student_event_registration.h \
     student_homepage.h \
     student_login.h \
-    student_registeration.h
+    student_registeration.h \
+    user.h
 
 FORMS += \
     admin_course_management.ui \

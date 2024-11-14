@@ -3,7 +3,7 @@
 #include <QString>
 #include <QVector>
 #include "course.h"
-#include "Student.h"
+#include "student.h"
 #include "event.h"
 
 class File_Manager

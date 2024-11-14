@@ -2,6 +2,7 @@
 #include <QFile> //FOR OPENNIGN AND READING FILES
 #include <QTextStream> //FOR SAVING STRINGS ON FILES
 #include <QDebug> // DEBUGGING ANY BAD THING
+#include "student.h"
 File_Manager::File_Manager(const QString& cPath, const QString& sPath, const QString& ePath) {//NEED MORE CONSTRUCTORS
     CourseFilePath=cPath;
     StudentFilePath=sPath;
@@ -43,7 +44,7 @@ QVector<Student> File_Manager::loadStudentData() {
     QVector<Student> students;
     QFile file(StudentFilePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "error,could not open course file!!";
+        qWarning() << "error, could not open student file!!";
         return students;
     }
 
@@ -51,7 +52,7 @@ QVector<Student> File_Manager::loadStudentData() {
     while (!in.atEnd()) {
         QString line = in.readLine();
         Student student;
-        if (student.fromString(line)) {  // SAME AS BEFORE
+        if (Student::fromString(line, student)) {  // Ensure valid Student is loaded
             students.append(student);
         }
     }
@@ -61,17 +62,16 @@ QVector<Student> File_Manager::loadStudentData() {
 void File_Manager::saveStudentData(const QVector<Student>& students) {
     QFile file(StudentFilePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qWarning() << "error,could not open course file!!";
+        qWarning() << "error, could not open student file!!";
         return;
     }
 
     QTextStream out(&file);
     for (const Student& student : students) {
-        out << student.toString() << "\n";  // SAME
+        out << student.toString() << "\n";  // Ensure consistent format
     }
     file.close();
 }
-
 // Load Event Data
 QVector<Event> File_Manager::loadEventData() {
     QVector<Event> events;
