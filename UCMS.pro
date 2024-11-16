@@ -15,6 +15,9 @@ SOURCES += \
     admin_homepage.cpp \
     admin_login.cpp \
     admin_student_management.cpp \
+    course.cpp \
+    event.cpp \
+    file_manager.cpp \
     main.cpp \
     mainwindow.cpp \
     student.cpp \
@@ -32,6 +35,9 @@ HEADERS += \
     admin_homepage.h \
     admin_login.h \
     admin_student_management.h \
+    course.h \
+    event.h \
+    file_manager.h \
     mainwindow.h \
     student.h \
     student_academic_profile.h \
@@ -39,7 +45,8 @@ HEADERS += \
     student_event_registration.h \
     student_homepage.h \
     student_login.h \
-    student_registeration.h
+    student_registeration.h \
+    user.h
 
 FORMS += \
     admin_course_management.ui \

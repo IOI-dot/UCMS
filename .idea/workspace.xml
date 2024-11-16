@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="92a848d9-1b02-47e0-b6e1-7288730333a1" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/course.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/course.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/event.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/event.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/file_manager.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/file_manager.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UCMS.pro" beforeDir="false" afterPath="$PROJECT_DIR$/UCMS.pro" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UCMS.pro.user" beforeDir="false" afterPath="$PROJECT_DIR$/UCMS.pro.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin.h" beforeDir="false" afterPath="$PROJECT_DIR$/admin.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/student.h" beforeDir="false" afterPath="$PROJECT_DIR$/student.h" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2024" />
+    <option name="minorVersion" value="2.1" />
+    <option name="productBranch" value="Classic" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 3
+}]]></component>
+  <component name="ProjectId" id="2ovp9Y4g6UuLxTTp3Ge5E63ZVif" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.RadMigrateCodeStyle": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "Merging Draft",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="92a848d9-1b02-47e0-b6e1-7288730333a1" name="Changes" comment="" />
+      <created>1731759753513</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1731759753513</updated>
+      <workItem from="1731759755050" duration="6000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
