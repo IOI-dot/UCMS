@@ -2,6 +2,7 @@
 #define ADMIN_H
 #include "user.h"
 #include <QDebug>
+//Fix.Intiate();
 class Admin : public User {
 private:
     QString adminID;
