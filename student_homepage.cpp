@@ -3,6 +3,9 @@
 #include "student_course_registration.h"
 #include "student_event_registration.h"
 #include "student_academic_profile.h"
+#include <QMessageBox>  // Include for QMessageBox
+
+extern Student* getCurrentStudent();  // Declare the external getCurrentStudent function
 
 student_homepage::student_homepage(QWidget *parent)
     : QDialog(parent)
@@ -23,7 +26,6 @@ void student_homepage::on_course_regis_pushButton_clicked()
     student_course_registration->show();
 }
 
-
 void student_homepage::on_event_regis_pushButton_clicked()
 {
     hide();
@@ -31,11 +33,15 @@ void student_homepage::on_event_regis_pushButton_clicked()
     Student_event_registration->show();
 }
 
-
 void student_homepage::on_academic_profile_pushButton_clicked()
 {
-    hide();
-    student_academic_profile *Student_academic_profile = new student_academic_profile;
-    Student_academic_profile->show();
+    Student* currentStudent = getCurrentStudent();  // Get the current logged-in student
+    if (currentStudent == nullptr) {
+        // Display an error message if no student is logged in
+        QMessageBox::warning(this, "Error", "No student is logged in.");
+    } else {
+        hide();
+        student_academic_profile *Student_academic_profile = new student_academic_profile(currentStudent);  // Pass the student object
+        Student_academic_profile->show();
+    }
 }
-

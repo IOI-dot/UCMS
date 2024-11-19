@@ -1,4 +1,4 @@
-#include "file_manager.h" //HEADER
+/* #include "file_manager.h" //HEADER
 #include <QFile> //FOR OPENNIGN AND READING FILES
 #include <QTextStream> //FOR SAVING STRINGS ON FILES
 #include <QDebug> // DEBUGGING ANY BAD THING
@@ -108,3 +108,4 @@ void File_Manager::saveEventData(const QVector<Event>& events) {
     }
     file.close();
 }
+*/

@@ -59,10 +59,10 @@
     </rect>
    </property>
    <property name="text">
-    <string>Password:</string>
+    <string>ID:</string>
    </property>
   </widget>
-  <widget class="QLineEdit" name="student_password_login_lineEdit">
+  <widget class="QLineEdit" name="student_id_login_lineEdit">
    <property name="geometry">
     <rect>
      <x>50</x>

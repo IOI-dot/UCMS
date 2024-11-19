@@ -35,9 +35,8 @@ public:
         qDebug() << "Registered events:";
     }
 
-    // Overridden login method for Student
-    bool login(const QString& enteredUsername, const QString& enteredPassword) override {
-        return (enteredUsername == username && enteredPassword == password);
+    bool login(const QString& enteredUsername, const QString& enteredStudentID) override {
+        return (enteredUsername == username && enteredStudentID == studentID);
     }
 
     void viewProfile()  override {
@@ -72,6 +71,17 @@ public:
         }
 
         return true;
+    }
+    QString getUsername() const {
+        return username;
+    }
+
+    QString getAcademicStatus() const {
+        return academicStatus;
+    }
+
+    QVector<QString> getRegisteredCourses() const {
+        return registeredCourses;
     }
 
 };

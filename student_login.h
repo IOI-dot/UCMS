@@ -2,6 +2,7 @@
 #define STUDENT_LOGIN_H
 
 #include <QDialog>
+#include "student.h"  // Make sure Student is included
 
 namespace Ui {
 class Student_Login;
@@ -17,11 +18,15 @@ public:
 
 private slots:
     void on_student_register_pushButton_clicked();
-
     void on_student_login_pushButton_clicked();
 
 private:
     Ui::Student_Login *ui;
+    Student* findStudentByUsernameAndPassword(const QString& username, const QString& password);
 };
+
+// Declare getter and setter for the current student
+Student* getCurrentStudent();  // Declaration for getCurrentStudent
+void setCurrentStudent(Student* student);  // Declaration for setCurrentStudent
 
 #endif // STUDENT_LOGIN_H
