@@ -107,11 +107,12 @@ QVector<Student> File_Manager::loadStudentData() {
         QString password = parts[1].mid(QString("Password: ").length());
         QString email = parts[2].mid(QString("Email: ").length());
         QString studentID = parts[3].mid(QString("Student ID: ").length());
+        QString academic = parts[4].mid(QString("Academic Status: ").length());
 
-        qDebug() << "Loaded student data from line" << lineCount << ":" << username << password << email << studentID;
+        qDebug() << "Loaded student data from line" << lineCount << ":" << username << password << email << studentID<<academic;
 
         // Create a Student object and append to the vector
-        Student student(username, password, email, studentID);
+        Student student(username, password, email, studentID, academic);
         students.append(student);
     }
 

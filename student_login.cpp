@@ -5,7 +5,6 @@
 #include <QMessageBox>
 #include "student.h"  // Include Student class header for login verification
 #include "file_manager.h"  // Include file manager to load student data
-
 Student_Login::Student_Login(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Student_Login)
