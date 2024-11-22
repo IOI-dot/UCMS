@@ -2,6 +2,7 @@
 #define ADMIN_LOGIN_H
 
 #include <QDialog>
+#include "admin.h"
 
 namespace Ui {
 class Admin_Login;
@@ -20,6 +21,7 @@ private slots:
 
 private:
     Ui::Admin_Login *ui;
+    Admin admin; // Instance of Admin to handle login
 };
 
 #endif // ADMIN_LOGIN_H

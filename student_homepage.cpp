@@ -35,13 +35,6 @@ void student_homepage::on_event_regis_pushButton_clicked()
 
 void student_homepage::on_academic_profile_pushButton_clicked()
 {
-    Student* currentStudent = getCurrentStudent();  // Get the current logged-in student
-    if (currentStudent == nullptr) {
-        // Display an error message if no student is logged in
-        QMessageBox::warning(this, "Error", "No student is logged in.");
-    } else {
-        hide();
-        student_academic_profile *Student_academic_profile = new student_academic_profile(currentStudent);  // Pass the student object
-        Student_academic_profile->show();
-    }
+    return;
 }
+

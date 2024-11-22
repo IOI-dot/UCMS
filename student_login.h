@@ -25,8 +25,5 @@ private:
     Student* findStudentByUsernameAndPassword(const QString& username, const QString& password);
 };
 
-// Declare getter and setter for the current student
-Student* getCurrentStudent();  // Declaration for getCurrentStudent
-void setCurrentStudent(Student* student);  // Declaration for setCurrentStudent
 
 #endif // STUDENT_LOGIN_H

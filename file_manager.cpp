@@ -1,13 +1,16 @@
-/* #include "file_manager.h" //HEADER
+#include "file_manager.h" //HEADER
 #include <QFile> //FOR OPENNIGN AND READING FILES
 #include <QTextStream> //FOR SAVING STRINGS ON FILES
 #include <QDebug> // DEBUGGING ANY BAD THING
 #include "student.h"
-File_Manager::File_Manager(const QString& cPath, const QString& sPath, const QString& ePath) {//NEED MORE CONSTRUCTORS
-    CourseFilePath=cPath;
-    StudentFilePath=sPath;
-    EventFilePath=ePath;
+#include "course.h"
+#include "event.h"
+File_Manager::File_Manager() {//NEED MORE CONSTRUCTORS
+    CourseFilePath="C:/Users/Merna/Desktop/Courses.txt";
+    StudentFilePath="C:/Users/Merna/Desktop/Students.txt";
+    EventFilePath="C:/Users/Merna/Desktop/Events.txt";
 }
+
 QVector<Course> File_Manager::loadCourseData(){
     QVector<Course> courses;
     QFile file(CourseFilePath); //OPEN THE FILE GIVEN
@@ -40,25 +43,91 @@ void File_Manager::saveCourseData(const QVector<Course>& courses) {
     }
     file.close();
 }
-QVector<Student> File_Manager::loadStudentData() {
-    QVector<Student> students;
-    QFile file(StudentFilePath);
+QVector<Admin> File_Manager::loadAdminData() {
+    QVector<Admin> admins;
+    QString adminFilePath = "C/Users/Merna/Desktop/Admins.txt";  // Corrected file path
+    QFile file(adminFilePath);
+
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "error, could not open student file!!";
-        return students;
+        qWarning() << "Could not open the file for reading:" << adminFilePath;
+        return admins;  // Return an empty vector if the file cannot be opened
     }
 
     QTextStream in(&file);
     while (!in.atEnd()) {
         QString line = in.readLine();
-        Student student;
-        if (Student::fromString(line, student)) {  // Ensure valid Student is loaded
-            students.append(student);
+        QStringList parts = line.split(", ");
+        if (parts.size() < 3) {
+            qWarning() << "Invalid admin data format:" << line;
+            continue; // Skip invalid lines
         }
+
+        // Extract fields (Remove the prefix like "Username: ", "Password: ", etc.)
+        QString username = parts[0].mid(QString("Username: ").length());
+        QString password = parts[1].mid(QString("Password: ").length());
+        QString email = parts[2].mid(QString("Email: ").length());
+
+        qDebug() << "Loaded admin data:" << username << password << email;
+
+        // Create an Admin object and append to the vector
+        Admin admin(username, password, email);
+        admins.append(admin);
     }
+
     file.close();
-    return students;
+
+    Admin::loadAdminDataFromFile(admins); // Populate the static vector in Admin
+
+    return admins;  // Return the loaded admins (optional, you can remove this return)
 }
+
+QVector<Student> File_Manager::loadStudentData() {
+    QVector<Student> students;
+    QFile file(StudentFilePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Could not open the file for reading:" << StudentFilePath;
+        return students;  // Return an empty vector if the file cannot be opened
+    }
+
+    QTextStream in(&file);
+    int lineCount = 0;  // To track how many lines we read
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        lineCount++;
+
+        QStringList parts = line.split(", ");
+        if (parts.size() < 4) {  // Ensure there are enough parts for valid student data
+            qWarning() << "Invalid student data format at line" << lineCount << ":" << line;
+            continue; // Skip invalid lines
+        }
+
+        // Extract fields (Remove the prefix like "Username: ", "Password: ", etc.)
+        QString username = parts[0].mid(QString("Username: ").length());
+        QString password = parts[1].mid(QString("Password: ").length());
+        QString email = parts[2].mid(QString("Email: ").length());
+        QString studentID = parts[3].mid(QString("Student ID: ").length());
+
+        qDebug() << "Loaded student data from line" << lineCount << ":" << username << password << email << studentID;
+
+        // Create a Student object and append to the vector
+        Student student(username, password, email, studentID);
+        students.append(student);
+    }
+
+    file.close();
+
+    // After reading all the students, confirm how many students were loaded
+    qDebug() << "Successfully loaded" << students.size() << "students from the file:" << StudentFilePath;
+
+    // Optionally, store the loaded students into the static student list
+    Student::studentList = students;  // Store the loaded data in the static vector of Student class
+
+    return students;  // Return the loaded students (optional, you can remove this return)
+}
+
+
+
 void File_Manager::saveStudentData(const QVector<Student>& students) {
     QFile file(StudentFilePath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -72,12 +141,11 @@ void File_Manager::saveStudentData(const QVector<Student>& students) {
     }
     file.close();
 }
-// Load Event Data
 QVector<Event> File_Manager::loadEventData() {
     QVector<Event> events;
     QFile file(EventFilePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "error,could not open course file!!";
+        qWarning() << "Error, could not open event file!";
         return events;
     }
 
@@ -85,13 +153,16 @@ QVector<Event> File_Manager::loadEventData() {
     while (!in.atEnd()) {
         QString line = in.readLine();
         Event event;
-        if (event.fromString(line)) {  // SAME!!!!!!!!!!
+        if (Event::fromString(line, event)) {  // Pass the line and the event object
             events.append(event);
+        } else {
+            qWarning() << "Failed to parse event data:" << line;  // Debugging message
         }
     }
     file.close();
     return events;
 }
+
 
 
 
@@ -108,4 +179,4 @@ void File_Manager::saveEventData(const QVector<Event>& events) {
     }
     file.close();
 }
-*/
+

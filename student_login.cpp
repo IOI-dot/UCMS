@@ -1,18 +1,21 @@
 #include "student_login.h"
-#include "ui_student_login.h"
 #include "student_registeration.h"
+#include "ui_student_login.h"
 #include "student_homepage.h"
-#include "student.h"
-#include <QMessageBox>  // Include for QMessageBox
-
-// Static variable to hold the currently logged-in student
-Student* currentStudent = nullptr;
+#include <QMessageBox>
+#include "student.h"  // Include Student class header for login verification
+#include "file_manager.h"  // Include file manager to load student data
 
 Student_Login::Student_Login(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Student_Login)
 {
     ui->setupUi(this);
+
+    // Instantiate File_Manager to load student data from file
+    File_Manager fileManager;
+    QVector<Student> students = fileManager.loadStudentData();  // Load the students from file
+    Student::studentList = students;  // Store the data in Student's static vector
 }
 
 Student_Login::~Student_Login()
@@ -20,53 +23,32 @@ Student_Login::~Student_Login()
     delete ui;
 }
 
-void Student_Login::on_student_register_pushButton_clicked()
-{
-    hide();
-    Student_Registeration *student_registeration = new Student_Registeration;
-    student_registeration->show();
-}
-
 void Student_Login::on_student_login_pushButton_clicked()
 {
-    // Get username and password input from the UI (assume there are QLineEdits for this)
-    QString username = ui->student_username_login_lineEdit->text();
-    QString id = ui->student_id_login_lineEdit->text();
+    // Get username and student ID from the UI
+    QString enteredUsername = ui->student_username_login_lineEdit->text();
+    QString enteredStudentID = ui->student_id_login_lineEdit->text();  // Assuming student ID is used for login
 
-    // Attempt to find the student by username and password
-    Student* student = findStudentByUsernameAndPassword(username, id);
+    // Attempt to verify the student's login credentials
+    if (Student::verifyLogin(enteredUsername, enteredStudentID)) {
+        // Successful login
+        QMessageBox::information(this, "Login Successful", "Welcome, Student!");
+        hide(); // Hide the login dialog
 
-    if (student != nullptr) {
-        // Set the current student if login is successful
-        setCurrentStudent(student);
-
-        // Hide the login window and show the student homepage
-        hide();
+        // Show student homepage
         student_homepage *Student_homepage = new student_homepage;
         Student_homepage->show();
     } else {
-        // Display an error message if login fails
-        QMessageBox::warning(this, "Login Failed", "Invalid username or password.");
+        // Failed login
+        QMessageBox::warning(this, "Login Failed", "Invalid username or student ID. Please try again.");
     }
 }
-
-// Simulated function to find a student (you should replace this with your actual logic)
-Student* Student_Login::findStudentByUsernameAndPassword(const QString& username, const QString& password)
+void Student_Login::on_student_register_pushButton_clicked()
 {
-    // Replace with your actual student retrieval logic (e.g., from a database or list)
-    // For now, creating a dummy student object (you can improve this logic)
-    if (username == "test" && password == "password") {
-        return new Student("test", "password", "test@example.com", "12345");  // Create Student with 4 arguments
-    }
-    return nullptr;
-}
+    // Hide the login dialog
+    this->hide();
 
-// Getter for the current student
-Student* getCurrentStudent() {
-    return currentStudent;
-}
-
-// Setter for the current student
-void setCurrentStudent(Student* student) {
-    currentStudent = student;
+    // Create and show the registration dialog
+    Student_Registeration *registerDialog = new Student_Registeration();
+    registerDialog->show();
 }

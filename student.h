@@ -1,89 +1,64 @@
 #ifndef STUDENT_H
 #define STUDENT_H
 
-#include "user.h"
+#include <QString>
 #include <QVector>
-#include <QDebug>
 
-class Student : public User {
+class Student {
 private:
+    QString username;
+    QString password;
+    QString email;
     QString studentID;
-    QVector<QString> registeredCourses;  // List of course IDs student is registered for
     QString academicStatus;
+    QVector<QString> registeredCourses;
+
 
 public:
+    // Static storage for all students
+    static QVector<Student> studentList;
     // Constructor
-    Student(const QString& uName, const QString& pass, const QString& mail, const QString& studentID)
-        : User(uName, pass, mail), studentID(studentID), academicStatus("Active") {}
-    Student(): User("NONE","BOB","NONE"), studentID('a'), academicStatus("NONE"){}
-
-    // Student-specific methods
-    void registerForCourse(const QString& courseID) {
-        qDebug() << "Registering for course:" << courseID;
-        registeredCourses.append(courseID);
-    }
-
-    void viewCourses() const {
-        qDebug() << "Available courses:";
-    }
-
-    void registerForEvent(const QString& eventID) {
-        qDebug() << "Registering for event:" << eventID;
-    }
-
-    void viewRegisteredEvents() const {
-        qDebug() << "Registered events:";
-    }
-
-    bool login(const QString& enteredUsername, const QString& enteredStudentID) override {
-        return (enteredUsername == username && enteredStudentID == studentID);
-    }
-
-    void viewProfile()  override {
-        User::viewProfile();
-        qDebug() << "Student ID:" << studentID;
-        qDebug() << "Academic Status:" << academicStatus;
-        qDebug() << "Registered Courses:" << registeredCourses;
-    }
-
-    // toString method for Student
-    QString toString() {
-        QString courses = registeredCourses.join(", ");
-        return QString("Student ID: %1, Academic Status: %2, %3, Registered Courses: [%4]")
-            .arg(studentID, academicStatus, toString(), courses);
-    }
-    static bool fromString(const QString& data, Student& student) {
-        QStringList parts = data.split(", ");
-        if (parts.size() < 5) {
-            qWarning() << "Invalid student data format:" << data;
-            return false;
+    Student(const QString& uName = "", const QString& pass = "", const QString& mail = "",
+            const QString& sID = "", const QString& status = "");
+    // Static method to verify login credentials across all students
+  static  bool verifyLogin(const QString& enteredUsername, const QString& enteredStudentID) {
+        // Iterate over all students in the static vector `studentList`
+        for (const Student& student : studentList) {
+            if (student.getUsername() == enteredUsername && student.getStudentID() == enteredStudentID) {
+                return true;  // If the username and student ID match, return true
+            }
         }
-
-        student.username = parts[0];
-        student.password = parts[1];
-        student.email = parts[2];
-        student.studentID = parts[3];
-        student.academicStatus = parts[4];
-
-        // Add courses (if any)
-        for (int i = 5; i < parts.size(); ++i) {
-            student.registeredCourses.append(parts[i]);
-        }
-
-        return true;
-    }
-    QString getUsername() const {
-        return username;
+        return false;  // If no match is found, return false
     }
 
-    QString getAcademicStatus() const {
-        return academicStatus;
-    }
+    // Getters and Setters
+    QString getUsername() const;
+    void setUsername(const QString& uName);
 
-    QVector<QString> getRegisteredCourses() const {
-        return registeredCourses;
-    }
+    QString getPassword() const;
+    void setPassword(const QString& pass);
 
+    QString getEmail() const;
+    void setEmail(const QString& mail);
+
+    QString getStudentID() const;
+    void setStudentID(const QString& sID);
+
+    QString getAcademicStatus() const;
+    void setAcademicStatus(const QString& status);
+
+    QVector<QString> getRegisteredCourses() const;
+    void setRegisteredCourses(const QVector<QString>& courses);
+
+    // Serialization
+    QString toString() const;
+    static bool fromString(const QString& data, Student& student);
+
+    // Student management methods
+    static bool addStudent(const Student& student);
+    static bool editStudent(const QString& studentID, const Student& updatedStudent);
+    static bool removeStudent(const QString& studentID);
+    static QVector<Student> getAllStudents();
 };
 
 #endif // STUDENT_H
