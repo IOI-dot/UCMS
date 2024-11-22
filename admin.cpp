@@ -1,6 +1,7 @@
 #include "admin.h"
 #include <QDebug>
 // Define the static member variable
+Admin* Admin::loggedInAdmin = nullptr; // Static member initialization
 QVector<Admin> Admin::allAdmins;
 // Course Management
 bool Admin::addCourse(const Course& course) {

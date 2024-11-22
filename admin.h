@@ -8,6 +8,7 @@
 
 class Admin : public User {
 public:
+    static Admin* loggedInAdmin; // Static member to store the logged-in admin
         // Static vector to store all admins
     static QVector<Admin> allAdmins;
     // Constructor: Initialize admin with username, password, and email
@@ -18,13 +19,15 @@ public:
     // Static method to verify login credentials across all admins
     bool login(const QString& enteredUsername, const QString& enteredPassword) {
         // Iterate over all admins in the static vector `allAdmins`
-        for (const Admin& admin : allAdmins) {
+        for (Admin& admin : allAdmins) {  // Use non-const reference so we can modify `loggedInAdmin`
             if (admin.username == enteredUsername && admin.password == enteredPassword) {
-                return true;  // If the username and password match, return true
+                loggedInAdmin = &admin;  // Set loggedInAdmin to the address of the matched admin
+                return true;  // Login successful
             }
         }
         return false;  // If no match is found, return false
     }
+
     // Course management
     bool addCourse(const Course& course);
     bool editCourse(int courseID, const Course& updatedCourse);

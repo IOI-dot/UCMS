@@ -8,7 +8,7 @@ QVector<Student> Student::studentList;
 Student::Student(const QString& uName, const QString& pass, const QString& mail,
                  const QString& sID, const QString& status)
     : username(uName), password(pass), email(mail), studentID(sID), academicStatus(status) {}
-
+Student* Student::loggedInStudent = nullptr;
 // Getters and Setters
 QString Student::getUsername() const { return username; }
 void Student::setUsername(const QString& uName) { username = uName; }
@@ -48,14 +48,8 @@ bool Student::fromString(const QString& data, Student& student) {
 }
 
 // Add a student
-bool Student::addStudent(const Student& student) {
-    for (const Student& existingStudent : studentList) {
-        if (existingStudent.getStudentID() == student.getStudentID()) {
-            return false; // Duplicate ID
-        }
-    }
+void Student::addStudent(const Student &student) {
     studentList.append(student);
-    return true;
 }
 
 // Edit a student

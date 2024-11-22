@@ -13,27 +13,43 @@ Event::Event(const QString& title, const QString& description, const QString& da
 // Convert event data to string
 QString Event::toString() const {
     QString speakers = guestSpeakers.join(", ");
-    return QString("Event Title: %1, Description: %2, Date: %3, Guest Speakers: [%4]")
-        .arg(eventTitle, eventDescription, eventDate, speakers);
+    return QString("Event Title: %1, Description: %2, Date: %3, Guest Speakers: [%4], CRN: %5")
+        .arg(eventTitle)
+        .arg(eventDescription)
+        .arg(eventDate)
+        .arg(speakers)
+        .arg(ID);  // Include CRN in the string
 }
+
 
 // Convert a string to an Event object
 bool Event::fromString(const QString& data, Event& event) {
     QStringList parts = data.split(", ");
-    if (parts.size() < 4) {
+    if (parts.size() < 5) {  // Make sure there are enough parts
         qWarning() << "Invalid event data format:" << data;
         return false;
     }
-    // Extract fields
+
+    // Extract fields from the string and remove the labels
     event.eventTitle = parts[0].mid(QString("Event Title: ").length());
     event.eventDescription = parts[1].mid(QString("Description: ").length());
     event.eventDate = parts[2].mid(QString("Date: ").length());
+
     QString speakersString = parts[3].mid(QString("Guest Speakers: [").length());
-    speakersString.chop(1); // Remove trailing ']'
+    speakersString.chop(1); // Remove the trailing ']'
     event.guestSpeakers = speakersString.split(", ", Qt::SkipEmptyParts);
+
+    // Extract CRN, ensuring we correctly parse the integer value
+    bool conversionOk;
+    event.ID = parts[4].mid(QString("CRN: ").length()).toInt(&conversionOk);
+    if (!conversionOk) {
+        qWarning() << "Invalid CRN format:" << parts[4];
+        return false;
+    }
 
     return true;
 }
+
 
 // Add an event
 bool Event::addEvent(const Event& event) {

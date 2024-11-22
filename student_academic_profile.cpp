@@ -1,14 +1,14 @@
-// student_academic_profile.cpp
 #include "student_academic_profile.h"
 #include "ui_student_academic_profile.h"
+#include "student.h"  // Include the Student class for accessing student data
 
-student_academic_profile::student_academic_profile(Student* student, QWidget *parent)
-    : QDialog(parent),
+student_academic_profile::student_academic_profile(QWidget *parent, const Student& student) :
+    QDialog(parent),
     ui(new Ui::student_academic_profile),
-    student(student)  // Initialize student pointer
+    currentStudent(student) // Store the provided student data
 {
-    ui->setupUi(this);
-    populateStudentProfile();  // Call the method to fill the profile with data
+    ui->setupUi(this);  // Set up the UI
+    displayStudentProfile(student);  // Display the profile data
 }
 
 student_academic_profile::~student_academic_profile()
@@ -16,15 +16,21 @@ student_academic_profile::~student_academic_profile()
     delete ui;
 }
 
-void student_academic_profile::populateStudentProfile() {
-    // Assuming student has methods to retrieve the data
-    ui->namelabel->setText(student->getUsername());
-    ui->idlabel->setText(student->getStudentID());
-    ui->aslabel->setText(student->getAcademicStatus());
+// This function is responsible for populating the UI elements with student data
+void student_academic_profile::displayStudentProfile(const Student& student)
+{
+    // Set the student's name
+    ui->namelabel->setText(student.getUsername());
 
-    QString courseList;
-    for (const QString& course : student->getRegisteredCourses()) {
-        courseList += course + "\n";  // Add newline between courses
-    }
-    ui->courselabel->setText(courseList);  // Display the courses
+    // Set the student's ID
+    ui->idlabel->setText(student.getStudentID());
+
+    ui->who->setText(student.getStudentID());
+    // Set the student's academic status
+    ui->aslabel->setText(student.getAcademicStatus());
+
+    // Set the registered courses
+    QStringList courseList = student.getRegisteredCourses();
+    QString courseText = "Courses Registered: \n" + courseList.join("\n");  // Join courses with newline
+    ui->courselabel->setText(courseText);  // Set the courses label
 }

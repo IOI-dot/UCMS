@@ -1,9 +1,11 @@
+// admin_login.cpp
 #include "admin_login.h"
 #include "ui_admin_login.h"
 #include "admin_homepage.h"
 #include <QMessageBox>
 #include "admin.h"  // Include Admin class header for login verification
 #include "file_manager.cpp"  // Include file manager to load data
+
 Admin_Login::Admin_Login(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Admin_Login)
@@ -32,9 +34,12 @@ void Admin_Login::on_admin_login_pushButton_clicked()
         QMessageBox::information(this, "Login Successful", "Welcome, Admin!");
         hide(); // Hide the login dialog
 
+        // Store the logged-in admin in the static variable of Admin class
+        Admin* loggedInAdmin = Admin::loggedInAdmin;
+
         // Show admin homepage
-        admin_homepage *Admin_homepage = new admin_homepage;
-        Admin_homepage->show();
+        admin_homepage *homepage = new admin_homepage(loggedInAdmin, this);
+        homepage->show();
     } else {
         // Failed login
         QMessageBox::warning(this, "Login Failed", "Invalid username or password. Please try again.");

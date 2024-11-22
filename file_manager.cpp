@@ -11,24 +11,39 @@ File_Manager::File_Manager() {//NEED MORE CONSTRUCTORS
     EventFilePath="C:/Users/Merna/Desktop/Events.txt";
 }
 
-QVector<Course> File_Manager::loadCourseData(){
-    QVector<Course> courses;
-    QFile file(CourseFilePath); //OPEN THE FILE GIVEN
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) { //DEBUGGING METHOD
-        qWarning() << "error,could not open course file!!";
+QVector<Course> File_Manager::loadCourseData() {
+    QVector<Course> courses;  // The vector to store the loaded courses
+    QFile file(CourseFilePath); // Open the file (assuming CourseFilePath is defined)
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        // If the file can't be opened, show a warning and return the empty courses vector
+        qWarning() << "Error: Could not open the course file at path:" << CourseFilePath;
         return courses;
     }
 
-    QTextStream in(&file);  //STORE THE DATA AS AN OBJECT OF TEXT
+    QTextStream in(&file);  // Stream for reading the file
+    int lineCount = 0;  // To track the number of lines processed
     while (!in.atEnd()) {
-        QString line = in.readLine();
+        QString line = in.readLine();  // Read a line from the file
+        lineCount++;
+
+        // Assuming fromString() is implemented in Course class to deserialize a course object from a string
         Course course;
-        if (course.fromString(line)) {  // MAKE THE COURSE FROMSTRING SO WE CAN PUT THE DATA IN THE CLASS
-            courses.append(course);
+        if (course.fromString(line)) {  // If parsing is successful
+            courses.append(course);  // Add the course to the vector
+        } else {
+            qWarning() << "Invalid course data at line" << lineCount << ":" << line;
         }
     }
-    file.close();
-    return courses;
+
+    file.close();  // Close the file after reading
+
+    qDebug() << "Successfully loaded" << courses.size() << "courses from the file:" << CourseFilePath;
+
+    // Optionally, you can assign the loaded courses to a static member of the Course class if needed
+    Course::courseList = courses;  // Store the loaded data in the static course list of the Course class
+
+    return courses;  // Return the vector of loaded courses
 }
 void File_Manager::saveCourseData(const QVector<Course>& courses) {
     QFile file(CourseFilePath);
@@ -45,7 +60,7 @@ void File_Manager::saveCourseData(const QVector<Course>& courses) {
 }
 QVector<Admin> File_Manager::loadAdminData() {
     QVector<Admin> admins;
-    QString adminFilePath = "C/Users/Merna/Desktop/Admins.txt";  // Corrected file path
+    QString adminFilePath = "C:/Users/Merna/Desktop/Admins.txt";  // Corrected file path
     QFile file(adminFilePath);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -143,25 +158,38 @@ void File_Manager::saveStudentData(const QVector<Student>& students) {
     file.close();
 }
 QVector<Event> File_Manager::loadEventData() {
-    QVector<Event> events;
-    QFile file(EventFilePath);
+    QVector<Event> events;  // The vector to store the loaded events
+    QFile file(EventFilePath);  // Open the file (assuming EventFilePath is defined)
+
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Error, could not open event file!";
+        // If the file can't be opened, show a warning and return the empty events vector
+        qWarning() << "Error: Could not open the event file at path:" << EventFilePath;
         return events;
     }
 
-    QTextStream in(&file);
+    QTextStream in(&file);  // Stream for reading the file
+    int lineCount = 0;  // To track the number of lines processed
     while (!in.atEnd()) {
-        QString line = in.readLine();
+        QString line = in.readLine();  // Read a line from the file
+        lineCount++;
+
+        // Assuming fromString() is implemented in Event class to deserialize an event object from a string
         Event event;
-        if (Event::fromString(line, event)) {  // Pass the line and the event object
-            events.append(event);
+        if (Event::fromString(line, event)) {  // If parsing is successful
+            events.append(event);  // Add the event to the vector
         } else {
-            qWarning() << "Failed to parse event data:" << line;  // Debugging message
+            qWarning() << "Invalid event data at line" << lineCount << ":" << line;
         }
     }
-    file.close();
-    return events;
+
+    file.close();  // Close the file after reading
+
+    qDebug() << "Successfully loaded" << events.size() << "events from the file:" << EventFilePath;
+
+    // Optionally, you can assign the loaded events to a static member of the Event class if needed
+    Event::eventList = events; // Store the loaded data in the static event list of the Event class
+
+    return events;  // Return the vector of loaded events
 }
 
 

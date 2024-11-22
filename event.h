@@ -12,10 +12,10 @@ private:
     QVector<QString> guestSpeakers;
     int ID;
 
+public:
     // Static storage for all events
     static QVector<Event> eventList;
 
-public:
     // Constructors
     Event();
     Event(const QString& title, const QString& description, const QString& date,

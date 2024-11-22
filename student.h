@@ -12,7 +12,7 @@ private:
     QString studentID;
     QString academicStatus;
     QVector<QString> registeredCourses;
-
+static Student* loggedInStudent;  // Static variable for logged-in student
 
 public:
     // Static storage for all students
@@ -20,6 +20,7 @@ public:
     // Constructor
     Student(const QString& uName = "", const QString& pass = "", const QString& mail = "",
             const QString& sID = "", const QString& status = "");
+
     // Static method to verify login credentials across all students
   static  bool verifyLogin(const QString& enteredUsername, const QString& enteredStudentID) {
         // Iterate over all students in the static vector `studentList`
@@ -55,10 +56,19 @@ public:
     static bool fromString(const QString& data, Student& student);
 
     // Student management methods
-    static bool addStudent(const Student& student);
+    static void addStudent(const Student& student);
     static bool editStudent(const QString& studentID, const Student& updatedStudent);
     static bool removeStudent(const QString& studentID);
     static QVector<Student> getAllStudents();
+    static void setLoggedInStudent(Student& student) {
+        if (!loggedInStudent) {
+            loggedInStudent = &student;  // Store the reference to the student
+        }
+    }
+
+    static Student* getLoggedInStudent() {
+        return loggedInStudent;
+    }
 };
 
 #endif // STUDENT_H

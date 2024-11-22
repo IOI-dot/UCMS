@@ -33,8 +33,20 @@ void student_homepage::on_event_regis_pushButton_clicked()
     Student_event_registration->show();
 }
 
+// In student_homepage.cpp
+
 void student_homepage::on_academic_profile_pushButton_clicked()
 {
-    return;
-}
+    // Hide the current homepage
+    hide();
 
+    // Get the logged-in student
+    Student* loggedInStudent = Student::getLoggedInStudent();
+    if (loggedInStudent) {
+        // Pass the logged-in student to the academic profile dialog
+        student_academic_profile *profileDialog = new student_academic_profile(this, *loggedInStudent);  // Pass as reference
+        profileDialog->show();  // Show the academic profile dialog
+    } else {
+        qDebug() << "No student is logged in!";
+    }
+}
