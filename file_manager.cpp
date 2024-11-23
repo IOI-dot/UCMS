@@ -10,7 +10,22 @@ File_Manager::File_Manager() {//NEED MORE CONSTRUCTORS
     StudentFilePath="C:/Users/Merna/Desktop/Students.txt";
     EventFilePath="C:/Users/Merna/Desktop/Events.txt";
 }
+// In File_Manager.cpp
+bool File_Manager::dataLoaded = false;
 
+void File_Manager::loadAllData() {
+    if (dataLoaded) {
+        qDebug() << "Data already loaded. Skipping reloading.";
+        return;
+    }
+
+    qDebug() << "Loading all data from files...";
+    loadAdminData();   // Loads and populates the Admin's static list
+    loadStudentData(); // Loads and populates the Student's static list
+    loadCourseData();  // Loads and populates the Course's static list
+    loadEventData();   // Loads and populates the Event's static list
+    dataLoaded = true;
+}
 QVector<Course> File_Manager::loadCourseData() {
     QVector<Course> courses;  // The vector to store the loaded courses
     QFile file(CourseFilePath); // Open the file (assuming CourseFilePath is defined)
@@ -108,23 +123,33 @@ QVector<Student> File_Manager::loadStudentData() {
     QTextStream in(&file);
     int lineCount = 0;  // To track how many lines we read
     while (!in.atEnd()) {
-        QString line = in.readLine();
+        QString line = in.readLine().trimmed();  // Trim any unnecessary whitespace
         lineCount++;
 
-        QStringList parts = line.split(", ");
-        if (parts.size() < 4) {  // Ensure there are enough parts for valid student data
+        // Split by commas
+        QStringList parts = line.split(",", Qt::SkipEmptyParts);
+
+        // Ensure there are enough parts for valid student data
+        if (parts.size() < 4) {
             qWarning() << "Invalid student data format at line" << lineCount << ":" << line;
             continue; // Skip invalid lines
         }
 
-        // Extract fields (Remove the prefix like "Username: ", "Password: ", etc.)
-        QString username = parts[0].mid(QString("Username: ").length());
-        QString password = parts[1].mid(QString("Password: ").length());
-        QString email = parts[2].mid(QString("Email: ").length());
-        QString studentID = parts[3].mid(QString("Student ID: ").length());
-        QString academic = parts[4].mid(QString("Academic Status: ").length());
+        // Extract the student fields
+        QString username = parts[0].trimmed();
+        QString password = parts[1].trimmed();
+        QString email = parts[2].trimmed();
+        QString studentID = parts[3].trimmed();
+        QString academic = parts[4].trimmed();
 
-        qDebug() << "Loaded student data from line" << lineCount << ":" << username << password << email << studentID<<academic;
+        // Validate that we have proper data
+        if (username.isEmpty() || studentID.isEmpty() || email.isEmpty() || academic.isEmpty()) {
+            qWarning() << "Invalid student data at line" << lineCount << ":" << line;
+            continue;  // Skip invalid students with missing critical info
+        }
+
+        qDebug() << "Loaded student data from line" << lineCount << ":"
+                 << username << password << email << studentID << academic;
 
         // Create a Student object and append to the vector
         Student student(username, password, email, studentID, academic);

@@ -5,7 +5,6 @@
 #include "admin.h"
 #include "student_academic_profile.h"
 
-// Constructor to accept the Admin object and store it
 admin_student_management::admin_student_management(Admin* admin, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::admin_student_management),
@@ -23,18 +22,15 @@ admin_student_management::~admin_student_management()
     delete ui;
 }
 
-// View student profile based on student ID
 void admin_student_management::onViewStudentClicked() {
-    QString studentID = ui->StudentID->text();
+    QString studentID = ui->StudentID->text().trimmed();  // Ensure to trim the input
 
-    // Check if the student exists in the currentAdmin's list
-    QVector<Student> allStudents = currentAdmin->viewStudents();  // Use the Admin object's viewStudents function
+    QVector<Student>& allStudents = currentAdmin->viewStudents();  // Get reference to student list
 
-    for (const Student& student : allStudents) {
+    for (Student& student : allStudents) {
         if (student.getStudentID() == studentID) {
-            // Show student profile
-            student_academic_profile *profileDialog = new student_academic_profile;
-            profileDialog->displayStudentProfile(student);
+            // Pass the student by reference to the profile dialog
+            student_academic_profile *profileDialog = new student_academic_profile(this, student);
             profileDialog->show();
             return;
         }
@@ -43,19 +39,36 @@ void admin_student_management::onViewStudentClicked() {
     QMessageBox::warning(this, "Student Not Found", "No student found with this ID.");
 }
 
-// Add student to a course (by adding CRN)
 void admin_student_management::onAddStudentClicked() {
-    QString studentID = ui->StudentID->text();
-    QString courseCRN = ui->COURSE_CRN->text();
+    QString studentID = ui->StudentID->text().trimmed();
+    QString courseCRN = ui->COURSE_CRN->text().trimmed();
 
-    // Check if the student exists in the currentAdmin's list
-    QVector<Student> allStudents = currentAdmin->viewStudents();  // Use the Admin object's viewStudents function
+    if (studentID.isEmpty()) {
+        QMessageBox::warning(this, "Missing Input", "Please enter a valid Student ID.");
+        return;
+    }
 
-    for (Student& student : allStudents) {
+    if (courseCRN.isEmpty()) {
+        QMessageBox::warning(this, "Missing Input", "Please enter a valid CRN.");
+        return;
+    }
+
+    QVector<Student>& allStudents = currentAdmin->viewStudents();  // Get reference to student list
+    for (Student& student : allStudents) {  // Use a reference to modify the original student
         if (student.getStudentID() == studentID) {
-            // Add course to the student's registration
-            student.getRegisteredCourses().append(courseCRN);
-            QMessageBox::information(this, "Success", "Course added to student.");
+            // Add course to the student's registration if not already registered
+            QVector<QString> registeredCourses = student.getRegisteredCourses();
+            if (!registeredCourses.contains(courseCRN)) {
+                registeredCourses.append(courseCRN);
+                student.setRegisteredCourses(registeredCourses);  // Update the student's courses list
+                QMessageBox::information(this, "Success", "Course added to the student.");
+            } else {
+                QMessageBox::information(this, "Duplicate", "Student is already registered for this course.");
+            }
+
+            // Refresh the profile and pass the student by reference
+            student_academic_profile* profileDialog = new student_academic_profile(this, student);
+            profileDialog->show();
             return;
         }
     }
@@ -64,21 +77,39 @@ void admin_student_management::onAddStudentClicked() {
 }
 
 void admin_student_management::onDeleteStudentClicked() {
-    QString studentID = ui->StudentID->text();
+    QString studentID = ui->StudentID->text().trimmed();
+    QString courseCRN = ui->COURSE_CRN->text().trimmed();
 
-    // Try to cast the studentID to an integer
-    bool ok;
-    int studentIDInt = studentID.toInt(&ok);  // Convert to int, &ok will indicate success or failure
-
-    if (!ok) {
-        QMessageBox::warning(this, "Invalid ID", "Student ID must be a valid number.");
-        return;  // Exit the function if the conversion failed
+    if (studentID.isEmpty()) {
+        QMessageBox::warning(this, "Missing Input", "Please enter a valid Student ID.");
+        return;
     }
 
-    // Now use the integer value for removing the student
-    if (currentAdmin->removeStudent(studentIDInt)) {
-        QMessageBox::information(this, "Success", "Student deleted.");
-    } else {
-        QMessageBox::warning(this, "Error", "Student not found.");
+    if (courseCRN.isEmpty()) {
+        QMessageBox::warning(this, "Missing Input", "Please enter a valid CRN.");
+        return;
     }
+
+    // Get the list of students from the admin
+    QVector<Student>& allStudents = currentAdmin->viewStudents();  // Get reference to student list
+    for (Student& student : allStudents) {  // Use reference to modify the original student
+        if (student.getStudentID() == studentID) {
+            // Remove course from the student's registration
+            QVector<QString> registeredCourses = student.getRegisteredCourses();
+            if (registeredCourses.contains(courseCRN)) {
+                registeredCourses.removeAll(courseCRN);
+                student.setRegisteredCourses(registeredCourses);  // Update the student's courses list
+                QMessageBox::information(this, "Success", "Course removed from the student's registration.");
+            } else {
+                QMessageBox::information(this, "Not Found", "The student is not registered for this course.");
+            }
+
+            // Refresh the profile and pass the student by reference
+            student_academic_profile* profileDialog = new student_academic_profile(this, student);
+            profileDialog->show();
+            return;
+        }
+    }
+
+    QMessageBox::warning(this, "Student Not Found", "No student found with this ID.");
 }

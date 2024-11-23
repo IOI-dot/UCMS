@@ -2,13 +2,14 @@
 #include <QDebug>
 
 // Static member initialization
-QVector<Student> Student::studentList;
+QVector<Student> Student::studentList;  // This stores all students
+Student* Student::loggedInStudent = nullptr;  // This points to the currently logged-in student
 
 // Constructor
 Student::Student(const QString& uName, const QString& pass, const QString& mail,
                  const QString& sID, const QString& status)
     : username(uName), password(pass), email(mail), studentID(sID), academicStatus(status) {}
-Student* Student::loggedInStudent = nullptr;
+
 // Getters and Setters
 QString Student::getUsername() const { return username; }
 void Student::setUsername(const QString& uName) { username = uName; }
@@ -28,13 +29,17 @@ void Student::setAcademicStatus(const QString& status) { academicStatus = status
 QVector<QString> Student::getRegisteredCourses() const { return registeredCourses; }
 void Student::setRegisteredCourses(const QVector<QString>& courses) { registeredCourses = courses; }
 
-// Serialization
+QVector<QString> Student::getRegisteredEvents() const { return registeredEvents; }
+void Student::setRegisteredEvents(const QVector<QString>& events) { registeredEvents = events; }
+
+// Serialization method to convert student object to string
 QString Student::toString() const {
     QString courses = registeredCourses.join(", ");
     return QString("Username: %1, Email: %2, Student ID: %3, Academic Status: %4, Registered Courses: [%5]")
         .arg(username, email, studentID, academicStatus, courses);
 }
 
+// Deserialize the student object from a string
 bool Student::fromString(const QString& data, Student& student) {
     QStringList parts = data.split(", ");
     student.username = parts[0].mid(QString("Username: ").length());
@@ -42,17 +47,17 @@ bool Student::fromString(const QString& data, Student& student) {
     student.studentID = parts[2].mid(QString("Student ID: ").length());
     student.academicStatus = parts[3].mid(QString("Academic Status: ").length());
     QString coursesString = parts[4].mid(QString("Registered Courses: [").length());
-    coursesString.chop(1);
+    coursesString.chop(1);  // Remove closing bracket
     student.registeredCourses = coursesString.split(", ", Qt::SkipEmptyParts);
     return true;
 }
 
-// Add a student
+// Add a student to the student list
 void Student::addStudent(const Student &student) {
     studentList.append(student);
 }
 
-// Edit a student
+// Edit an existing student in the list
 bool Student::editStudent(const QString& studentID, const Student& updatedStudent) {
     for (Student& student : studentList) {
         if (student.getStudentID() == studentID) {
@@ -60,10 +65,10 @@ bool Student::editStudent(const QString& studentID, const Student& updatedStuden
             return true;
         }
     }
-    return false; // Student ID not found
+    return false;  // Student ID not found
 }
 
-// Remove a student
+// Remove a student from the list
 bool Student::removeStudent(const QString& studentID) {
     for (int i = 0; i < studentList.size(); ++i) {
         if (studentList[i].getStudentID() == studentID) {
@@ -71,10 +76,13 @@ bool Student::removeStudent(const QString& studentID) {
             return true;
         }
     }
-    return false; // Student ID not found
+    return false;  // Student ID not found
 }
 
 // Get all students
-QVector<Student> Student::getAllStudents() {
+QVector<Student>& Student::getAllStudents() {
     return studentList;
 }
+
+
+

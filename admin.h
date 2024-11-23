@@ -8,56 +8,36 @@
 
 class Admin : public User {
 public:
-    static Admin* loggedInAdmin; // Static member to store the logged-in admin
-        // Static vector to store all admins
-    static QVector<Admin> allAdmins;
-    // Constructor: Initialize admin with username, password, and email
+    static Admin* loggedInAdmin;         // Pointer to the logged-in admin
+    static QVector<Admin> allAdmins;    // Static vector to store all admins
+
+    // Constructor
     Admin(const QString& username, const QString& password, const QString& email)
         : User(username, password, email) {}
 
-    // Override the login method from the User class
-    // Static method to verify login credentials across all admins
-    bool login(const QString& enteredUsername, const QString& enteredPassword) {
-        // Iterate over all admins in the static vector `allAdmins`
-        for (Admin& admin : allAdmins) {  // Use non-const reference so we can modify `loggedInAdmin`
-            if (admin.username == enteredUsername && admin.password == enteredPassword) {
-                loggedInAdmin = &admin;  // Set loggedInAdmin to the address of the matched admin
-                return true;  // Login successful
-            }
-        }
-        return false;  // If no match is found, return false
-    }
+    // Login Methods
+    bool login(const QString& enteredUsername, const QString& enteredPassword);
+    static bool verifyLogin(const QString& enteredUsername, const QString& enteredPassword);
 
-    // Course management
+    // Course Management
     bool addCourse(const Course& course);
     bool editCourse(int courseID, const Course& updatedCourse);
     bool removeCourse(int courseID);
     QVector<Course> viewCourses() const;
 
-    // Student management
-    QVector<Student> viewStudents() const;
-    bool editStudent(int studentID, const Student& updatedStudent);
-    bool removeStudent(int studentID);
+    // Student Management
+    QVector<Student>& viewStudents();
+    bool editStudent(const QString& studentID, const Student& updatedStudent);
+    bool removeStudent(const QString& studentID);
 
-    // Event management
+    // Event Management
     bool addEvent(const Event& event);
     bool editEvent(int eventID, const Event& updatedEvent);
     bool removeEvent(int eventID);
     QVector<Event> viewEvents() const;
-    // Static method to populate allAdmins vector with data
-    static void loadAdminDataFromFile(const QVector<Admin>& admins) {
-        allAdmins = admins;  // Populate the static vector with the loaded admin data
-    }
 
-    // Static method to verify login credentials
-    static bool verifyLogin(const QString& enteredUsername, const QString& enteredPassword) {
-        for (const Admin& admin : allAdmins) {
-            if (admin.username == enteredUsername && admin.password == enteredPassword) {
-                return true;
-            }
-        }
-        return false;
-    }
+    // Load Admin Data
+    static void loadAdminDataFromFile(const QVector<Admin>& admins);
 };
 
 #endif // ADMIN_H

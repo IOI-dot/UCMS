@@ -2,27 +2,24 @@
 #define STUDENT_ACADEMIC_PROFILE_H
 
 #include <QDialog>
-#include "student.h" // Include the Student class
+#include "student.h"
 
 namespace Ui {
 class student_academic_profile;
 }
-// student_academic_profile.h
-class student_academic_profile : public QDialog
-{
+
+class student_academic_profile : public QDialog {
     Q_OBJECT
 
 public:
-    explicit student_academic_profile(QWidget *parent = nullptr, const Student& student = Student());
+    explicit student_academic_profile(QWidget *parent, Student& student);  // Pass by reference
     ~student_academic_profile();
 
-    void displayStudentProfile(const Student& student);  // Function to display student data
+    void displayStudentProfile();  // Display based on currentStudent reference
 
 private:
-    Ui::student_academic_profile *ui;
-    const Student& currentStudent;  // Reference to the student
-
+    Ui::student_academic_profile* ui;
+    Student& currentStudent;  // Reference to the actual student object
 };
-
 
 #endif // STUDENT_ACADEMIC_PROFILE_H

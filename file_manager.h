@@ -11,6 +11,7 @@ class File_Manager
 public:
     //Constructor
     File_Manager();
+    void loadAllData();  // New method to load all data
     // Course
     QVector<Course> loadCourseData(); //LOAD
     void saveCourseData(const QVector<Course>& courses); //SAVE
@@ -28,6 +29,7 @@ private:
     QString CourseFilePath; //FILE PATHS!!!!!
     QString StudentFilePath;
     QString EventFilePath;
+    static bool dataLoaded;
 };
 
 #endif // FILE_MANAGER_H

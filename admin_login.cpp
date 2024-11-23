@@ -12,7 +12,9 @@ Admin_Login::Admin_Login(QWidget *parent)
     , admin("admin_username", "admin_password", "admin_email@example.com") // Initialize admin with credentials
 {
     ui->setupUi(this);
+
     File_Manager fileManager;
+    fileManager.loadAllData();
     QVector<Admin> admins = fileManager.loadAdminData();  // Load the admins from file
     Admin::loadAdminDataFromFile(admins);  // Store the data in Admin's static vector
 }

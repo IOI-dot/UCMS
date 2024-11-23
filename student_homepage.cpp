@@ -37,16 +37,28 @@ void student_homepage::on_event_regis_pushButton_clicked()
 
 void student_homepage::on_academic_profile_pushButton_clicked()
 {
+    // Get the logged-in student
+    Student* loggedInStudent = Student::getLoggedInStudent();
+
+    // Ensure a student is logged in before proceeding
+    if (!loggedInStudent) {
+        QMessageBox::critical(this, "Error", "No student is currently logged in.");
+        qDebug() << "No student is logged in!";
+        return;  // Exit function to avoid crashes
+    }
+
+    // Validate that the logged-in student has a valid ID
+    if (loggedInStudent->getStudentID().isEmpty()) {
+        QMessageBox::critical(this, "Error", "The logged-in student data is invalid.");
+        qDebug() << "Invalid student data!";
+        return;
+    }
+
     // Hide the current homepage
     hide();
 
-    // Get the logged-in student
-    Student* loggedInStudent = Student::getLoggedInStudent();
-    if (loggedInStudent) {
-        // Pass the logged-in student to the academic profile dialog
-        student_academic_profile *profileDialog = new student_academic_profile(this, *loggedInStudent);  // Pass as reference
-        profileDialog->show();  // Show the academic profile dialog
-    } else {
-        qDebug() << "No student is logged in!";
-    }
+    // Pass the logged-in student to the academic profile dialog
+    student_academic_profile *profileDialog = new student_academic_profile(this, *loggedInStudent);  // Pass as reference
+    profileDialog->show();  // Show the academic profile dialog
 }
+

@@ -5,18 +5,21 @@
 #include <QMessageBox>
 #include "student.h"  // Include Student class header for login verification
 #include "file_manager.h"  // Include file manager to load student data
-int i =0;
+
+int i = 0;
+
 Student_Login::Student_Login(QWidget *parent)
-    : QDialog(parent)
-    , ui(new Ui::Student_Login)
+    : QDialog(parent), ui(new Ui::Student_Login)
 {
     ui->setupUi(this);
-    if(i==0){
-    // Instantiate File_Manager to load student data from file
-    File_Manager fileManager;
-    QVector<Student> students = fileManager.loadStudentData();  // Load the students from file
-    Student::studentList = students;  // Store the data in Student's static vector
-    i++;
+
+    if (i == 0) {
+        // Load student data from file into static list
+        File_Manager fileManager;
+        fileManager.loadAllData();
+        QVector<Student> students = fileManager.loadStudentData();  // Load the students from file
+        Student::studentList = students;  // Store the data in Student's static vector
+        i++;
     }
 }
 
@@ -27,36 +30,34 @@ Student_Login::~Student_Login()
 
 void Student_Login::on_student_login_pushButton_clicked()
 {
-    // Get username and student ID from the UI
+    // Get input from the line edits
     QString enteredUsername = ui->student_username_login_lineEdit->text();
     QString enteredStudentID = ui->student_id_login_lineEdit->text();
 
-    // Attempt to verify the student's login credentials
-    if (Student::verifyLogin(enteredUsername, enteredStudentID)) {
-        // Successful login
-        QMessageBox::information(this, "Login Successful", "Welcome, Student!");
+    // Check if fields are empty
+    if (enteredUsername.isEmpty() || enteredStudentID.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "Both Username and Student ID fields must be filled.");
+        return;
+    }
 
-        // Get the student object based on the entered username and student ID
-        Student* loggedInStudent = nullptr;
-        for (Student& student : Student::studentList) {
-            if (student.getUsername() == enteredUsername && student.getStudentID() == enteredStudentID) {
-                loggedInStudent = &student;
-                break;
-            }
-        }
+    // Use the Student::login method to check the login credentials
+    if (Student::verifyLogin(enteredUsername, enteredStudentID)) {
+        // If login is successful, get the logged-in student
+        Student* loggedInStudent = Student::getLoggedInStudent();
 
         if (loggedInStudent) {
-            // Dereference the pointer and pass a reference
-            Student::setLoggedInStudent(*loggedInStudent);  // Dereference to pass the reference
+            // Show success message and proceed to the homepage
+            QMessageBox::information(this, "Login Successful", "Welcome, " + loggedInStudent->getUsername() + "!");
+            hide();  // Hide the login dialog
 
-            hide(); // Hide the login dialog
-
-            // Show student homepage
-            student_homepage *Student_homepage = new student_homepage;
-            Student_homepage->show();
+            // Open the student homepage
+            student_homepage *homepage = new student_homepage;
+            homepage->show();
+        } else {
+            QMessageBox::critical(this, "Error", "Login verification succeeded, but student could not be retrieved.");
         }
     } else {
-        // Failed login
+        // If login failed
         QMessageBox::warning(this, "Login Failed", "Invalid username or student ID. Please try again.");
     }
 }
