@@ -18,7 +18,7 @@
     <rect>
      <x>40</x>
      <y>50</y>
-     <width>341</width>
+     <width>531</width>
      <height>221</height>
     </rect>
    </property>
@@ -26,86 +26,63 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>170</x>
+     <x>180</x>
      <y>30</y>
      <width>91</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>COURSES</string>
-   </property>
-  </widget>
-  <widget class="QComboBox" name="combo">
-   <property name="geometry">
-    <rect>
-     <x>500</x>
-     <y>20</y>
-     <width>211</width>
-     <height>22</height>
-    </rect>
+    <string>Events</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>780</x>
-     <y>90</y>
+     <x>750</x>
+     <y>30</y>
      <width>131</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>Register courses</string>
+    <string>Registered Events</string>
    </property>
   </widget>
   <widget class="QPushButton" name="PushADD">
    <property name="geometry">
     <rect>
-     <x>510</x>
-     <y>60</y>
+     <x>500</x>
+     <y>270</y>
      <width>75</width>
      <height>24</height>
     </rect>
    </property>
    <property name="text">
-    <string>PushButton</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>430</x>
-     <y>20</y>
-     <width>49</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>ADD</string>
+    <string>Register</string>
    </property>
   </widget>
   <widget class="QListWidget" name="Registrationlist">
    <property name="geometry">
     <rect>
-     <x>700</x>
-     <y>110</y>
+     <x>670</x>
+     <y>50</y>
      <width>256</width>
      <height>192</height>
     </rect>
    </property>
   </widget>
-  <widget class="QLabel" name="label_3">
+  <widget class="QPushButton" name="Back">
    <property name="geometry">
     <rect>
-     <x>450</x>
-     <y>100</y>
-     <width>121</width>
-     <height>16</height>
+     <x>200</x>
+     <y>340</y>
+     <width>75</width>
+     <height>24</height>
     </rect>
    </property>
    <property name="text">
-    <string>Prequestes</string>
+    <string>Back</string>
    </property>
   </widget>
  </widget>

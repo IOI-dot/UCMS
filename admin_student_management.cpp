@@ -4,7 +4,7 @@
 #include <QDebug>
 #include "admin.h"
 #include "student_academic_profile.h"
-
+#include "admin_homepage.h"
 admin_student_management::admin_student_management(Admin* admin, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::admin_student_management),
@@ -15,6 +15,8 @@ admin_student_management::admin_student_management(Admin* admin, QWidget *parent
     connect(ui->VIEW, &QPushButton::clicked, this, &admin_student_management::onViewStudentClicked);
     connect(ui->ADD, &QPushButton::clicked, this, &admin_student_management::onAddStudentClicked);
     connect(ui->DELETE, &QPushButton::clicked, this, &admin_student_management::onDeleteStudentClicked);
+    // Connect the Back button to the slot
+    connect(ui->Back, &QPushButton::clicked, this, &admin_student_management::on_Back_clicked);
 }
 
 admin_student_management::~admin_student_management()
@@ -53,6 +55,21 @@ void admin_student_management::onAddStudentClicked() {
         return;
     }
 
+    // Check if the course exists in the course list
+    bool courseExists = false;
+    for (const Course& course : Course::courseList) {
+        if (course.getCourseID() == courseCRN) {
+            courseExists = true;
+            break;  // Course found, no need to continue searching
+        }
+    }
+
+    if (!courseExists) {
+        QMessageBox::warning(this, "Course Not Found", "The course with the given CRN does not exist.");
+        return;  // Exit the function if course does not exist
+    }
+
+    // Get the list of students
     QVector<Student>& allStudents = currentAdmin->viewStudents();  // Get reference to student list
     for (Student& student : allStudents) {  // Use a reference to modify the original student
         if (student.getStudentID() == studentID) {
@@ -100,6 +117,7 @@ void admin_student_management::onDeleteStudentClicked() {
                 registeredCourses.removeAll(courseCRN);
                 student.setRegisteredCourses(registeredCourses);  // Update the student's courses list
                 QMessageBox::information(this, "Success", "Course removed from the student's registration.");
+
             } else {
                 QMessageBox::information(this, "Not Found", "The student is not registered for this course.");
             }
@@ -112,4 +130,14 @@ void admin_student_management::onDeleteStudentClicked() {
     }
 
     QMessageBox::warning(this, "Student Not Found", "No student found with this ID.");
+}
+// Slot for Back button click
+void admin_student_management::on_Back_clicked() {
+    // Hide the current event registration dialog
+    this->close();
+
+    // Show the existing student homepage dialog
+    if (parentWidget()) {
+        parentWidget()->show();  // This will show the parent window (which is the student homepage)
+    }
 }

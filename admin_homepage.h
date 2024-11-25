@@ -3,7 +3,7 @@
 
 #include <QDialog>  // QDialog is used as the base class for dialog-based UI
 #include "admin.h"  // Include the Admin class for logged-in admin management
-
+#include "file_manager.h"
 namespace Ui {
 class admin_homepage;  // Forward declaration of the UI class for admin_homepage
 }
@@ -24,7 +24,7 @@ private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
     void on_pushButton_3_clicked();
-
+    void on_Exit_clicked();         // EXIT Button
 private:
     // Member variables
     Admin* currentAdmin;  // Store the logged-in admin object

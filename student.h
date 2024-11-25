@@ -3,7 +3,7 @@
 
 #include <QString>
 #include <QVector>
-
+#include <QDebug>
 class Student {
 private:
     QString username;
@@ -13,26 +13,35 @@ private:
     QString academicStatus;
     QVector<QString> registeredCourses;  // Registered courses for the student
     QVector<QString> registeredEvents;   // Registered events for the student
+    QVector<QString> completedPrerequisites;  // Prerequisites completed by the student
+
 public:
     static QVector<Student> studentList;  // Static list of all students
     static Student* loggedInStudent;  // Static variable for logged-in student
-
+    QVector<QString> getCompletedPrerequisites() const;
+    void setCompletedPrerequisites(const QVector<QString>& prerequisites);
+    static QVector<QString> currentStudentPrerequisites;
     // Constructor
-    Student(const QString& uName = "", const QString& pass = "", const QString& mail = "",
-            const QString& sID = "", const QString& status = "");
+    Student(const QString& uName = "", const QString& mail = "", const QString& ID = "",
+            const QString& status = "", const QString& courses = "");
 
     // Getters and Setters
     QString getUsername() const;
     void setUsername(const QString& uName);
-
-    QString getPassword() const;
-    void setPassword(const QString& pass);
+    QString getCompletedPrerequisite(int index) const {
+        if (index >= 0 && index < completedPrerequisites.size()) {
+            qDebug() << "Getting prerequisite at index" << index << ":" << completedPrerequisites[index];
+            return completedPrerequisites[index];
+        }
+        qDebug() << "Index out of range:" << index;
+        return QString();  // Return an empty string if the index is invalid
+    }
 
     QString getEmail() const;
     void setEmail(const QString& mail);
 
     QString getStudentID() const;
-    void setStudentID(const QString& sID);
+    void setStudentID(const QString& ID);
 
     QString getAcademicStatus() const;
     void setAcademicStatus(const QString& status);
@@ -62,17 +71,36 @@ public:
         return loggedInStudent;
     }
     static bool verifyLogin(const QString& enteredUsername, const QString& enteredStudentID) {
-        // Iterate over all students in the static vector `studentList`
+        // Iterate over all students in the static vector studentList
         for (int i = 0; i < studentList.size(); ++i) {
-            // Use reference to avoid making copies and ensure direct access
-            const Student& student = studentList[i];
+            const Student& student = studentList[i];  // Use reference to avoid unnecessary copying
+
+            // Debug: Log current student details being checked
+            qDebug() << "Checking student: Username =" << student.getUsername()
+                     << ", StudentID =" << student.getStudentID();
 
             if (student.getUsername() == enteredUsername && student.getStudentID() == enteredStudentID) {
-                return true;  // If the username and student ID match, return true
+                // If login is successful, update loggedInStudent
+                loggedInStudent = const_cast<Student*>(&student);  // Safe here, since studentList holds all objects
+
+                // Debug: Log successful login
+                qDebug() << "Login successful for student: Username =" << student.getUsername();
+
+                // After logging in, you can directly access the student's registered courses and events
+                qDebug() << "Registered Courses: " << student.getRegisteredCourses().join(", ");
+                qDebug() << "Registered Events: " << student.getRegisteredEvents().join(", ");
+
+                return true;  // Credentials match, login successful
             }
         }
-        return false;  // If no match is found, return false
+
+        // If no match is found, log the failure
+        qDebug() << "Login failed: No matching student found for Username =" << enteredUsername
+                 << ", StudentID =" << enteredStudentID;
+        return false;  // No match found, login failed
     }
+
+
 
 };
 

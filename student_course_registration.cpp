@@ -3,24 +3,21 @@
 #include <QMessageBox>
 #include <QDebug>
 #include "student.h"
-
-Student_Course_Registration::Student_Course_Registration(QWidget *parent) :
+#include "student_homepage.h"
+    static int callCount = 0;
+Student_Course_Registration::Student_Course_Registration(QWidget *parent, Student* student) :
     QDialog(parent),
-    ui(new Ui::Student_Course_Registration)
+    ui(new Ui::Student_Course_Registration),
+    currentStudent(student)  // Store the pointer to the logged-in student
 {
     ui->setupUi(this);
-
-    // Populate the table with available courses
+    // Initialize or populate as required
     populateCourses();
-
-    // Populate the Registration list with the student's already registered courses
     populateRegistrationList();
 
-    // Connect the "Register" button click signal to the corresponding slot
-    connect(ui->PushADD, &QPushButton::clicked, this, &Student_Course_Registration::on_registerButton_clicked);
-
-    // Connect the course selection change signal to the corresponding slot
+    connect(ui->register_2, &QPushButton::clicked, this, &Student_Course_Registration::on_register_2_clicked);
     connect(ui->TABLECOURSES, &QTableWidget::itemSelectionChanged, this, &Student_Course_Registration::on_courseSelectionChanged);
+    connect(ui->Back, &QPushButton::clicked, this, &Student_Course_Registration::on_Back_clicked);
 }
 
 Student_Course_Registration::~Student_Course_Registration()
@@ -30,12 +27,11 @@ Student_Course_Registration::~Student_Course_Registration()
 
 void Student_Course_Registration::populateCourses()
 {
-    // Get all available courses (assuming Course::getAllCourses() returns a QVector<Course>)
     QVector<Course> courses = Course::getAllCourses();
 
     ui->TABLECOURSES->setRowCount(courses.size());
-    ui->TABLECOURSES->setColumnCount(5);  // Columns for ID, Name, Instructor, Credits, Prerequisites
-    ui->TABLECOURSES->setHorizontalHeaderLabels(QStringList() << "Course ID" << "Course Name" << "Instructor" << "Credits" << "Prerequisites");
+    ui->TABLECOURSES->setColumnCount(6);  // Now we have one more column for Completed Prerequisites
+    ui->TABLECOURSES->setHorizontalHeaderLabels(QStringList() << "Course ID" << "Course Name" << "Instructor" << "Credits" << "Prerequisites" << "Completed Prerequisites");
 
     for (int i = 0; i < courses.size(); ++i) {
         const Course &course = courses[i];
@@ -46,71 +42,93 @@ void Student_Course_Registration::populateCourses()
         ui->TABLECOURSES->setItem(i, 2, new QTableWidgetItem(course.getInstructor()));
         ui->TABLECOURSES->setItem(i, 3, new QTableWidgetItem(course.getSchedule()));
         ui->TABLECOURSES->setItem(i, 4, new QTableWidgetItem(course.getPrerequisites().join(", ")));
-    }
 
-    // Populate the ComboBox with all available courses
-    ui->combo->clear();
-    for (const Course &course : courses) {
-        ui->combo->addItem(course.getName());  // Add course names to ComboBox
+        // Check completed prerequisites from the static variable
+        QStringList completedList;
+        for (const QString& prereq : course.getPrerequisites()) {
+            if (Student::currentStudentPrerequisites.contains(prereq)) {
+                completedList.append(prereq);
+            }
+        }
+        ui->TABLECOURSES->setItem(i, 5, new QTableWidgetItem(completedList.join(", ")));
     }
 }
+
 
 void Student_Course_Registration::populateRegistrationList()
 {
-    // Get the logged-in student
-    Student *currentStudent = Student::getLoggedInStudent();
+    ui->Registrationlist->clear();  // Clear the existing list
 
-    // Clear the list first
-    ui->Registrationlist->clear();
 
-    // Add each course the student is registered for to the list
-    for (const QString &course : currentStudent->getRegisteredCourses()) {
-        ui->Registrationlist->addItem(course);  // Add course name to ListWidget
+    if (currentStudent) {
+        qDebug() << "Populating Registration List with:" << currentStudent->getRegisteredCourses();
+
+        for (const QString &course : currentStudent->getRegisteredCourses()) {
+            ui->Registrationlist->addItem(course);
+        }
+    } else {
+        qDebug() << "currentStudent is null in populateRegistrationList.";
     }
 }
 
-void Student_Course_Registration::on_registerButton_clicked()
+void Student_Course_Registration::on_register_2_clicked()
 {
-    // Get the selected row in the table
-    QList<QTableWidgetItem *> selectedItems = ui->TABLECOURSES->selectedItems();
+    ++callCount;
+    if (callCount == 2) {
+        callCount = 0;
+        return;
+    }
 
+    QList<QTableWidgetItem *> selectedItems = ui->TABLECOURSES->selectedItems();
     if (selectedItems.isEmpty()) {
         QMessageBox::warning(this, "Selection Error", "Please select a course to register.");
         return;
     }
 
-    // Get course details from the selected row
     int row = selectedItems.first()->row();
     QString courseID = ui->TABLECOURSES->item(row, 0)->text();
     QString courseName = ui->TABLECOURSES->item(row, 1)->text();
 
-    // Find the selected course in the available courses
     QVector<Course> courses = Course::getAllCourses();
     Course selectedCourse;
+    bool courseFound = false;
 
     for (const Course &course : courses) {
         if (course.getCourseID() == courseID) {
             selectedCourse = course;
+            courseFound = true;
             break;
         }
     }
 
-    // Check if the student can register for the selected course
-    if (canRegisterForCourse(selectedCourse)) {
-        // Register the student for the course
-        Student *currentStudent = Student::getLoggedInStudent();
-        currentStudent->getRegisteredCourses().append(courseName);
-
-        // Display confirmation message
-        QMessageBox::information(this, "Registration Successful", "You have been successfully registered for the course: " + courseName);
-
-        // Optionally, update the registration list (or refresh UI)
-        populateRegistrationList();  // Refresh the list with the newly registered course
-    } else {
-        // Notify the student about unmet prerequisites
-        QMessageBox::warning(this, "Prerequisite Error", "You do not meet the prerequisites for this course.");
+    if (!courseFound) {
+        QMessageBox::critical(this, "Error", "Selected course could not be found.");
+        return;
     }
+
+    if (!canRegisterForCourse(selectedCourse)) {
+        QMessageBox::warning(this, "Prerequisite Error",
+                             "You do not meet the prerequisites for this course: " +
+                                 selectedCourse.getPrerequisites().join(", "));
+        return;
+    }
+
+    QVector<QString> registeredCourses = Student::getLoggedInStudent()->getRegisteredCourses();
+
+    if (registeredCourses.contains(courseName)) {
+        QMessageBox::information(this, "Already Registered", "You are already registered for this course.");
+        return;
+    }
+
+    registeredCourses.append(courseName);
+    Student::getLoggedInStudent()->setRegisteredCourses(registeredCourses);
+
+    QMessageBox::information(this, "Registration Successful",
+                             "You have been successfully registered for the course: " + courseName);
+
+    populateRegistrationList();
 }
+
 
 void Student_Course_Registration::on_courseSelectionChanged()
 {
@@ -120,7 +138,6 @@ void Student_Course_Registration::on_courseSelectionChanged()
 
 void Student_Course_Registration::updatePrerequisiteInfo()
 {
-    // Get the selected course's prerequisites and display them in the label
     QList<QTableWidgetItem *> selectedItems = ui->TABLECOURSES->selectedItems();
 
     if (selectedItems.isEmpty()) {
@@ -130,34 +147,38 @@ void Student_Course_Registration::updatePrerequisiteInfo()
     int row = selectedItems.first()->row();
     QString prerequisites = ui->TABLECOURSES->item(row, 4)->text();
 
-    // Update the prerequisite label text
     ui->prequesetes->setText("Prerequisites: " + prerequisites);
 }
 
 bool Student_Course_Registration::canRegisterForCourse(const Course& selectedCourse)
 {
-    // Get the logged-in student
-    Student *currentStudent = Student::getLoggedInStudent();
-
-    // Get the prerequisites for the course
     QVector<QString> prerequisites = selectedCourse.getPrerequisites();
 
-    // Check if the prerequisites are explicitly set as "None"
     if (prerequisites.isEmpty() || prerequisites.contains("None")) {
-        // No prerequisites or "None", the student can register
         return true;
     }
 
-    // Check if the student has completed the prerequisites
+    QVector<QString> completedPrerequisites = Student::currentStudentPrerequisites;
+    qDebug() << "Current Student Prerequisites (Static):" << Student::currentStudentPrerequisites;
+
     for (const QString &prerequisite : prerequisites) {
-        if (!currentStudent->getRegisteredCourses().contains(prerequisite)) {
-            // If any prerequisite is not met, return false
-            qDebug() << "Student does not meet the prerequisite:" << prerequisite;
+        if (!completedPrerequisites.contains(prerequisite)) {
             return false;
         }
     }
 
-    // All prerequisites are met
     return true;
 }
 
+
+
+void Student_Course_Registration::on_Back_clicked()
+{
+    // Hide the current event registration dialog
+    this->close();
+
+    // Show the existing student homepage dialog
+    if (parentWidget()) {
+        parentWidget()->show();  // This will show the parent window (which is the student homepage)
+    }
+}

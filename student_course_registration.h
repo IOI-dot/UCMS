@@ -20,15 +20,16 @@ class Student_Course_Registration : public QDialog
     Q_OBJECT
 
 public:
-    explicit Student_Course_Registration(QWidget *parent = nullptr);
+    explicit Student_Course_Registration(QWidget *parent = nullptr, Student* student = nullptr);  // Pass Student pointer
     ~Student_Course_Registration();
 
 private slots:
-    void on_registerButton_clicked();  // Slot for Register button click
+    void on_register_2_clicked();  // Slot for Register button click
     void on_courseSelectionChanged();  // Slot for course selection change
-
+    void on_Back_clicked();  // Slot for Back button
 private:
     Ui::Student_Course_Registration *ui;
+    Student* currentStudent;  // Store the logged-in student
     void populateCourses();  // Populate course table with available courses
     void populateRegistrationList();  // Populate registration list with the student's registered courses
     void updatePrerequisiteInfo();  // Update the prerequisite info label
@@ -36,3 +37,4 @@ private:
 };
 
 #endif // STUDENT_COURSE_REGISTRATION_H
+

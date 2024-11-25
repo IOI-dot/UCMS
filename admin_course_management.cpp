@@ -1,12 +1,15 @@
 #include "admin_course_management.h"
 #include "ui_admin_course_management.h"
 #include "course.h"
+#include "file_manager.h"
+#include "admin_homepage.h"  // Include the header for the admin homepage
 #include <QMessageBox>
-#include <QDebug>
-
-admin_course_management::admin_course_management(QWidget *parent) :
+admin_course_management::admin_course_management(Admin* admin, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::admin_course_management) {
+    ui(new Ui::admin_course_management),
+    currentAdmin(admin)
+// Store the passed Admin pointer
+{
     ui->setupUi(this);
 
     // Initialize File_Manager instance
@@ -17,9 +20,11 @@ admin_course_management::admin_course_management(QWidget *parent) :
 
     // Store the courses in the static course list of the Course class
     Course::courseList = loadedCourses;
+
+    // Connect the back-to-home button to its slot
+    connect(ui->BackToHome, &QPushButton::clicked, this, &admin_course_management::on_BackToHome_clicked);
 }
 
-// Destructor
 admin_course_management::~admin_course_management() {
     delete ui;
 }
@@ -62,6 +67,7 @@ void admin_course_management::on_ADD_clicked() {
     QMessageBox::information(this, "Success", "Course added successfully!");
 }
 
+// Edit a course
 void admin_course_management::on_EDIT_clicked() {
     QString id = ui->CRNADD_2->text();  // Get the CRN entered by the user
 
@@ -92,8 +98,16 @@ void admin_course_management::on_EDIT_clicked() {
             course.setSchedule(ui->SCHADD_2->text());
             course.setPrerequisites(ui->lineEdit_6->text().split(",", Qt::SkipEmptyParts));
 
-            // Refresh the UI to show updated courses
+            // Refresh the UI
             refreshUI();
+
+            // Clear input fields
+            ui->CRNADD_2->clear();
+            ui->NAMEADD_2->clear();
+            ui->DEPADD_2->clear();
+            ui->INSADD_2->clear();
+            ui->SCHADD_2->clear();
+            ui->lineEdit_6->clear();
             QMessageBox::information(this, "Success", "Course edited successfully!");
             return;  // Exit the function once the course is updated
         }
@@ -105,22 +119,36 @@ void admin_course_management::on_EDIT_clicked() {
     }
 }
 
-// Delete a course
 void admin_course_management::on_DelteBottun_clicked() {
-    QString id = ui->DELETEDIT->text();
+    QString id = ui->DELETEDIT->text().trimmed();  // Get and trim the input
 
-    // Check if the course ID exists
+    // Check if the input is empty
+    if (id.isEmpty()) {
+        QMessageBox::warning(this, "Input Error", "Please enter a valid Course ID.");
+        return;
+    }
+
+    // Check if the course ID exists in the course list
     bool courseFound = false;
     for (int i = 0; i < Course::courseList.size(); ++i) {
         if (Course::courseList[i].getCourseID() == id) {
-            courseFound = true;
+            courseFound = true;  // Mark as found
+            // Convert the course ID (QString) to an integer for deletion
+            int courseID = id.toInt();
+
             // Try to remove the course using the static removeCourse method
-            if (Course::removeCourse(id.toInt())) {
-                // Refresh the UI after deletion
+            if (Course::removeCourse(courseID)) {
+                // Refresh the UI
                 refreshUI();
+
+                // Clear input fields
+                ui->DELETEDIT->clear();
                 QMessageBox::information(this, "Success", "Course deleted successfully!");
+            } else {
+                // If the course couldn't be removed
+                QMessageBox::warning(this, "Error", "Failed to delete the course. Please try again.");
             }
-            break;
+            break;  // Exit loop after deleting the course
         }
     }
 
@@ -130,8 +158,18 @@ void admin_course_management::on_DelteBottun_clicked() {
     }
 }
 
-// Refresh the UI to display courses
+
+void admin_course_management::on_BackToHome_clicked() {
+    // Hide the current event registration dialog
+    this->close();
+
+    // Show the existing student homepage dialog
+    if (parentWidget()) {
+        parentWidget()->show();  // This will show the parent window (which is the student homepage)
+    }
+}
+
 void admin_course_management::refreshUI() {
     // The refreshUI method now displays the courses from Course::courseList directly
-    // If needed, you could further populate UI components with course information here
+    // You can further populate UI components with course information if needed
 }

@@ -87,3 +87,4 @@ bool Course::removeCourse(int courseID) {
 QVector<Course> Course::getAllCourses()  {
     return courseList;
 }
+

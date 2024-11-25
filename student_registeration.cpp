@@ -19,19 +19,18 @@ void Student_Registeration::on_sign_up_pushButton_clicked()
 {
     // Get the data from the registration form
     QString username = ui->full_name_lineEdit->text();
-    QString password = ui->password_regis_lineEdit->text();
-    QString email = ui->email_lineEdit->text();
+    QString email = ui->password_regis_lineEdit->text();
     QString studentID = ui->UID_lineEdit->text();
     QString academicStatus = "Freshman";
 
     // Check if all fields are filled
-    if (username.isEmpty() || password.isEmpty() || email.isEmpty() || studentID.isEmpty() || academicStatus.isEmpty()) {
+    if (username.isEmpty() || email.isEmpty() || studentID.isEmpty() || academicStatus.isEmpty()) {
         QMessageBox::warning(this, "Input Error", "Please fill in all fields.");
         return;
     }
 
     // Create a new student object
-    Student newStudent(username, password, email, studentID, academicStatus);
+    Student newStudent(username,email, studentID, academicStatus);
 
     // Add the student to the in-memory list
     Student::addStudent(newStudent);

@@ -4,10 +4,13 @@
 #include "file_manager.h"
 #include <QMessageBox>
 #include <QDebug>
-
-admin_event_management::admin_event_management(QWidget *parent) :
+#include "admin_homepage.h"  // Include the header for admin_homepage
+// Constructor accepting an Admin* parameter
+admin_event_management::admin_event_management(Admin* admin, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::admin_event_management) {
+    ui(new Ui::admin_event_management),
+    currentAdmin(admin)  // Initialize the currentAdmin pointer with the passed Admin object
+{
     ui->setupUi(this);
 
     // Initialize File_Manager instance
@@ -18,6 +21,8 @@ admin_event_management::admin_event_management(QWidget *parent) :
 
     // Store the events in the static event list of the Event class
     Event::eventList = loadedEvents;
+    // Connect the Back button to the slot
+    connect(ui->Back, &QPushButton::clicked, this, &admin_event_management::on_Back_clicked);
 }
 
 // Destructor
@@ -91,8 +96,15 @@ void admin_event_management::on_EDIT_clicked() {
             event.setEventDate(ui->ADDDATE_2->text());
             event.setGuestSpeakers(ui->ADDSPEAKERS_2->text().split(",", Qt::SkipEmptyParts));
 
-            // Refresh the UI to show updated events
+            // Refresh the UI
             refreshUI();
+
+            // Clear input fields
+            ui->ADDTITLE_2->clear();
+            ui->ADDDDESCRIPTION_2->clear();
+            ui->ADDDATE_2->clear();
+            ui->ADDSPEAKERS_2->clear();
+            ui->ADDCRN_2->clear();
             QMessageBox::information(this, "Success", "Event edited successfully!");
             return;  // Exit the function once the event is updated
         }
@@ -115,8 +127,11 @@ void admin_event_management::on_DELETE_clicked() {
             eventFound = true;
             // Try to remove the event using the static removeEvent method
             if (Event::removeEvent(crn.toInt())) {
-                // Refresh the UI after deletion
+                // Refresh the UI
                 refreshUI();
+
+                // Clear input fields
+                ui->Deletedit->clear();
                 QMessageBox::information(this, "Success", "Event deleted successfully!");
             }
             break;
@@ -128,7 +143,16 @@ void admin_event_management::on_DELETE_clicked() {
         QMessageBox::warning(this, "Error", "Event ID not found! Please enter a valid CRN.");
     }
 }
+// Slot for the Back button click
+void admin_event_management::on_Back_clicked() {
+    // Hide the current event registration dialog
+    this->close();
 
+    // Show the existing student homepage dialog
+    if (parentWidget()) {
+        parentWidget()->show();  // This will show the parent window (which is the student homepage)
+    }
+}
 // Refresh the UI to display events
 void admin_event_management::refreshUI() {
     // The refreshUI method now displays the events from Event::eventList directly

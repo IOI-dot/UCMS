@@ -49,9 +49,11 @@ void Student_Login::on_student_login_pushButton_clicked()
             // Show success message and proceed to the homepage
             QMessageBox::information(this, "Login Successful", "Welcome, " + loggedInStudent->getUsername() + "!");
             hide();  // Hide the login dialog
-
+             Student::currentStudentPrerequisites = loggedInStudent->getCompletedPrerequisites();
+            qDebug() << "Current Student Prerequisites (Static):" << Student::currentStudentPrerequisites;
             // Open the student homepage
-            student_homepage *homepage = new student_homepage;
+            QVector<QString> completedPrerequisites = loggedInStudent->getCompletedPrerequisites();
+            student_homepage *homepage = new student_homepage(loggedInStudent);
             homepage->show();
         } else {
             QMessageBox::critical(this, "Error", "Login verification succeeded, but student could not be retrieved.");

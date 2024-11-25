@@ -17,6 +17,9 @@ public:
 
     void displayStudentProfile();  // Display based on currentStudent reference
 
+private slots:
+    void on_Back_clicked();  // Slot to handle Back button click
+
 private:
     Ui::student_academic_profile* ui;
     Student& currentStudent;  // Reference to the actual student object

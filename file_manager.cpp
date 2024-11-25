@@ -117,7 +117,7 @@ QVector<Student> File_Manager::loadStudentData() {
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qWarning() << "Could not open the file for reading:" << StudentFilePath;
-        return students;  // Return an empty vector if the file cannot be opened
+        return students;
     }
 
     QTextStream in(&file);
@@ -126,46 +126,155 @@ QVector<Student> File_Manager::loadStudentData() {
         QString line = in.readLine().trimmed();  // Trim any unnecessary whitespace
         lineCount++;
 
-        // Split by commas
+        // Split the line into parts by commas, but only for the first 4 fields
         QStringList parts = line.split(",", Qt::SkipEmptyParts);
 
-        // Ensure there are enough parts for valid student data
-        if (parts.size() < 4) {
+        // Ensure there are at least 5 parts (username, email, student ID, academic status, and courses)
+        if (parts.size() < 5) {
             qWarning() << "Invalid student data format at line" << lineCount << ":" << line;
             continue; // Skip invalid lines
         }
 
-        // Extract the student fields
-        QString username = parts[0].trimmed();
-        QString password = parts[1].trimmed();
-        QString email = parts[2].trimmed();
-        QString studentID = parts[3].trimmed();
-        QString academic = parts[4].trimmed();
+        // Extract fields (remove the prefixes like "Username: ", "Email: ", etc.)
+        QString username = parts[0].mid(QString("Username: ").length()).trimmed();
+        QString email = parts[1].mid(QString("Email: ").length()).trimmed();
+        QString studentID = parts[2].mid(QString("Student ID: ").length()).trimmed();
+        QString academic = parts[3].mid(QString("Academic Status: ").length()).trimmed();
 
-        // Validate that we have proper data
+        // Ensure essential data is not empty
         if (username.isEmpty() || studentID.isEmpty() || email.isEmpty() || academic.isEmpty()) {
-            qWarning() << "Invalid student data at line" << lineCount << ":" << line;
-            continue;  // Skip invalid students with missing critical info
+            qWarning() << "Missing essential data at line" << lineCount << ":" << line;
+            continue; // Skip invalid lines
         }
 
-        qDebug() << "Loaded student data from line" << lineCount << ":"
-                 << username << password << email << studentID << academic;
+        // **Handling the Courses part**:
+        QString coursesString = line.mid(line.indexOf("Registered Courses: ") + QString("Registered Courses: ").length()).trimmed();
 
-        // Create a Student object and append to the vector
-        Student student(username, password, email, studentID, academic);
+        // Extract courses string before "Registered Events" begins
+        int eventsIndex = line.indexOf("Registered Events:");
+        if (eventsIndex != -1) {
+            coursesString = coursesString.mid(0, eventsIndex - line.indexOf("Registered Courses: ") - QString("Registered Courses: ").length()).trimmed();
+        }
+
+        // Clean up the courses string
+        if (coursesString.startsWith("[") && coursesString.endsWith("]")) {
+            coursesString = coursesString.mid(1, coursesString.length() - 2);  // Remove the surrounding brackets
+        }
+        // Clean up the courses string (remove brackets without regex)
+        if (!coursesString.isEmpty() && coursesString[0] == '[') {
+            coursesString.remove(0, 1);  // Remove the first character (open bracket)
+        }
+
+            coursesString.chop(1);  // Remove the last character (close bracket)
+
+
+        // Remove any unwanted characters (e.g., trailing commas)
+        coursesString.remove(',');  // Remove commas
+        coursesString = coursesString.trimmed();  // Trim any extra spaces
+        coursesString.replace(" ,", "");  // Remove any leftover space before commas
+        coursesString.remove(']');
+
+        // Split courses by pipe '|', ensuring to trim spaces
+        QStringList courseList = coursesString.split("|", Qt::SkipEmptyParts);
+
+        // Clean up the individual courses and add them to a QVector
+        QVector<QString> registeredCourses;
+        for (const QString& course : courseList) {
+            QString trimmedCourse = course.trimmed();
+            if (!trimmedCourse.isEmpty()) {
+                registeredCourses.append(trimmedCourse);
+            }
+        }
+
+        // **Handling the Registered Events part**:
+        // Extract the portion after "Registered Events:" and trim it
+        QString eventsString = line.mid(line.indexOf("Registered Events: ") + QString("Registered Events: ").length()).trimmed();
+
+        // Check if there is a "Completed Prerequisites:" section and stop before it
+        int prerequisitesIndex = line.indexOf("Completed Prerequisites:");
+        if (prerequisitesIndex != -1) {
+            eventsString = eventsString.left(prerequisitesIndex - line.indexOf("Registered Events: ") - QString("Registered Events: ").length()).trimmed();
+        }
+
+        // Clean up the events string
+        if (eventsString.startsWith("[") && eventsString.endsWith("]")) {
+            eventsString = eventsString.mid(1, eventsString.length() - 2);  // Remove the surrounding brackets
+        }
+
+        // Handle cases where multiple "Registered Events" sections might be present
+        int repeatedEventsIndex = eventsString.indexOf("Registered Events:");
+        if (repeatedEventsIndex != -1) {
+            eventsString = eventsString.left(repeatedEventsIndex).trimmed();  // Remove any subsequent "Registered Events:" parts
+        }
+
+        // Remove any unwanted parts like extra commas and spaces
+        eventsString = eventsString.trimmed();
+        eventsString.replace(" ,", "");  // Remove any leftover space before commas
+        eventsString.chop(1);
+        eventsString.chop(1);
+        if (!eventsString.isEmpty() && eventsString[0] == '[') {
+            eventsString.remove(0, 1);  // Remove the first character (open bracket)
+        }
+        // Split events by pipe '|', ensuring to trim spaces
+        QStringList eventList = eventsString.split("|", Qt::SkipEmptyParts);
+
+
+        // Clean up the individual events and add them to a QVector
+        QVector<QString> registeredEvents;
+        for (const QString& event : eventList) {
+            QString trimmedEvent = event.trimmed();
+            if (!trimmedEvent.isEmpty()) {
+                registeredEvents.append(trimmedEvent);
+            }
+        }
+
+        // Debug: Show cleaned-up courses and events
+        qDebug() << "Final Registered Courses:" << registeredCourses.join(", ");
+        qDebug() << "Final Registered Events:" << registeredEvents.join(", ");
+
+        // Create the Student object and set the courses and events
+        Student student(username, email, studentID, academic);
+        student.setRegisteredCourses(registeredCourses);  // Set the parsed courses
+        student.setRegisteredEvents(registeredEvents);    // Set the parsed events
         students.append(student);
+        QString prerequisitesString = line.mid(line.indexOf("Completed Prerequisites: ") + QString("Completed Prerequisites: ").length()).trimmed();
+
+        // Clean up the prerequisites string (remove surrounding brackets)
+        if (prerequisitesString.startsWith("[") && prerequisitesString.endsWith("]")) {
+            prerequisitesString = prerequisitesString.mid(1, prerequisitesString.length() - 2);  // Remove surrounding brackets
+        }
+
+        // Remove any unwanted characters
+        prerequisitesString = prerequisitesString.trimmed();
+        prerequisitesString.replace(" ,", "");  // Remove any leftover space before commas
+
+        // Split prerequisites by pipe '|', ensuring to trim spaces
+        QStringList prerequisiteList = prerequisitesString.split("|", Qt::SkipEmptyParts);
+        // Clean up the individual prerequisites and add them to a QVector
+        QVector<QString> completedPrerequisites;
+        for (const QString& prerequisite : prerequisiteList) {
+            QString trimmedPrerequisite = prerequisite.trimmed();
+            if (!trimmedPrerequisite.isEmpty()) {
+                completedPrerequisites.append(trimmedPrerequisite);
+            }
+        }
+        // Now set the completed prerequisites for the student
+        student.setCompletedPrerequisites(completedPrerequisites);
+        qDebug() << "Completed prerequisites set for student:" << completedPrerequisites.join(", ");
+
     }
 
     file.close();
 
-    // After reading all the students, confirm how many students were loaded
     qDebug() << "Successfully loaded" << students.size() << "students from the file:" << StudentFilePath;
 
     // Optionally, store the loaded students into the static student list
-    Student::studentList = students;  // Store the loaded data in the static vector of Student class
+    Student::studentList = students;
 
-    return students;  // Return the loaded students (optional, you can remove this return)
+    return students;
 }
+
+
 
 
 
@@ -178,7 +287,7 @@ void File_Manager::saveStudentData(const QVector<Student>& students) {
 
     QTextStream out(&file);
     for (const Student& student : students) {
-        out << student.toString() << "\n";  // Ensure consistent format
+        out << student.toString() << "\n";  // Ensure consistent format with registered courses
     }
     file.close();
 }

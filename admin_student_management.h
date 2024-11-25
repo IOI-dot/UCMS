@@ -13,6 +13,7 @@ class admin_student_management : public QDialog
     Q_OBJECT
 
 public:
+
     explicit admin_student_management(Admin* admin, QWidget *parent = nullptr);  // Accept Admin pointer
     ~admin_student_management();
 
@@ -20,6 +21,7 @@ private slots:
     void onViewStudentClicked();
     void onAddStudentClicked();
     void onDeleteStudentClicked();
+    void on_Back_clicked();  // Slot for the Back button
 
 private:
     Admin* currentAdmin;  // Member variable to store the logged-in admin

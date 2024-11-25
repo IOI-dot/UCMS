@@ -390,6 +390,19 @@
     <string>Delete</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="BackToHome">
+   <property name="geometry">
+    <rect>
+     <x>740</x>
+     <y>190</y>
+     <width>75</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Back</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

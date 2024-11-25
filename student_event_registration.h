@@ -19,15 +19,18 @@ class student_event_registration : public QDialog
     Q_OBJECT
 
 public:
-    explicit student_event_registration(QWidget *parent = nullptr);
+    explicit student_event_registration(Student* student, QWidget *parent = nullptr);  // Pass Student pointer to the constructor
     ~student_event_registration();
 
 private slots:
     void on_registerButton_clicked();  // Slot for Register button click
     void on_eventSelectionChanged();  // Slot for event selection change
+    void on_Back_clicked();  // Slot for back button click
 
 private:
     Ui::student_event_registration *ui;
+    Student* currentStudent;  // Pointer to the logged-in student
+
     void populateEvents();  // Populate event table with available events
     void populateRegistrationList();  // Populate registration list with student's registered events
 };
