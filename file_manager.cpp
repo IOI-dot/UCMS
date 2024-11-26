@@ -6,9 +6,9 @@
 #include "course.h"
 #include "event.h"
 File_Manager::File_Manager() {//NEED MORE CONSTRUCTORS
-    CourseFilePath=":/resources/Path/Courses.txt";
-    StudentFilePath=":/resources/Path/Students.txt";
-    EventFilePath=":/resources/Path/Events.txt";
+    CourseFilePath="C:/Users/Merna/Desktop/Courses.txt";
+    StudentFilePath="C:/Users/Merna/Desktop/Students.txt";
+    EventFilePath="C:/Users/Merna/Desktop/Events.txt";
 }
 // In File_Manager.cpp
 bool File_Manager::dataLoaded = false;
@@ -75,7 +75,7 @@ void File_Manager::saveCourseData(const QVector<Course>& courses) {
 }
 QVector<Admin> File_Manager::loadAdminData() {
     QVector<Admin> admins;
-    QString adminFilePath = ":/resources/Path/Admins.txt";  // Corrected file path
+    QString adminFilePath = "C:/Users/Merna/Desktop/Admins.txt";  // Corrected file path
     QFile file(adminFilePath);
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
