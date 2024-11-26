@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/resources">
+        <file>Path/Events.txt</file>
+        <file>Path/Students.txt</file>
+        <file>Path/Courses.txt</file>
+        <file>Path/Admins.txt</file>
+    </qresource>
+</RCC>

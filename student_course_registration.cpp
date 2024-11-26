@@ -32,7 +32,7 @@ void Student_Course_Registration::populateCourses()
     ui->TABLECOURSES->setRowCount(courses.size());
     ui->TABLECOURSES->setColumnCount(6);  // Now we have one more column for Completed Prerequisites
     ui->TABLECOURSES->setHorizontalHeaderLabels(QStringList() << "Course ID" << "Course Name" << "Instructor" << "Credits" << "Prerequisites" << "Completed Prerequisites");
-
+    QVector<QString> globalCompletedPrerequisites = Student::getCurrentStudentPrerequisites(); // Use static data
     for (int i = 0; i < courses.size(); ++i) {
         const Course &course = courses[i];
 
@@ -43,10 +43,10 @@ void Student_Course_Registration::populateCourses()
         ui->TABLECOURSES->setItem(i, 3, new QTableWidgetItem(course.getSchedule()));
         ui->TABLECOURSES->setItem(i, 4, new QTableWidgetItem(course.getPrerequisites().join(", ")));
 
-        // Check completed prerequisites from the static variable
+        // Check completed prerequisites
         QStringList completedList;
         for (const QString& prereq : course.getPrerequisites()) {
-            if (Student::currentStudentPrerequisites.contains(prereq)) {
+            if (globalCompletedPrerequisites.contains(prereq)) {
                 completedList.append(prereq);
             }
         }

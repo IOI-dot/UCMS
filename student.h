@@ -15,11 +15,10 @@ private:
     QVector<QString> registeredEvents;   // Registered events for the student
     QVector<QString> completedPrerequisites;  // Prerequisites completed by the student
 
+
 public:
     static QVector<Student> studentList;  // Static list of all students
     static Student* loggedInStudent;  // Static variable for logged-in student
-    QVector<QString> getCompletedPrerequisites() const;
-    void setCompletedPrerequisites(const QVector<QString>& prerequisites);
     static QVector<QString> currentStudentPrerequisites;
     // Constructor
     Student(const QString& uName = "", const QString& mail = "", const QString& ID = "",
@@ -28,15 +27,28 @@ public:
     // Getters and Setters
     QString getUsername() const;
     void setUsername(const QString& uName);
-    QString getCompletedPrerequisite(int index) const {
-        if (index >= 0 && index < completedPrerequisites.size()) {
-            qDebug() << "Getting prerequisite at index" << index << ":" << completedPrerequisites[index];
-            return completedPrerequisites[index];
-        }
-        qDebug() << "Index out of range:" << index;
-        return QString();  // Return an empty string if the index is invalid
+    // Getter for completed prerequisites
+    QVector<QString> getCompletedPrerequisites() const {
+        return completedPrerequisites;
     }
 
+    // Setter for completed prerequisites
+    void setCompletedPrerequisites(const QVector<QString>& prerequisites) {
+        completedPrerequisites = prerequisites;
+
+        // Update static prerequisites for global use
+        currentStudentPrerequisites = prerequisites;
+    }
+
+    // Static Getter
+    static QVector<QString> getCurrentStudentPrerequisites() {
+        return currentStudentPrerequisites;
+    }
+
+    // Static Setter
+    static void setCurrentStudentPrerequisites(const QVector<QString>& prerequisites) {
+        currentStudentPrerequisites = prerequisites;
+    }
     QString getEmail() const;
     void setEmail(const QString& mail);
 

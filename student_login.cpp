@@ -52,7 +52,6 @@ void Student_Login::on_student_login_pushButton_clicked()
              Student::currentStudentPrerequisites = loggedInStudent->getCompletedPrerequisites();
             qDebug() << "Current Student Prerequisites (Static):" << Student::currentStudentPrerequisites;
             // Open the student homepage
-            QVector<QString> completedPrerequisites = loggedInStudent->getCompletedPrerequisites();
             student_homepage *homepage = new student_homepage(loggedInStudent);
             homepage->show();
         } else {

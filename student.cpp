@@ -17,14 +17,10 @@ Student::Student(const QString& uName, const QString& mail, const QString& ID,
     }
 }
 
-QVector<QString> Student::getCompletedPrerequisites() const {
-    return completedPrerequisites;
-}
+
 QVector<QString> Student::currentStudentPrerequisites;
 
-void Student::setCompletedPrerequisites(const QVector<QString>& prerequisites) {
-    completedPrerequisites = prerequisites;
-}
+
 // Getters and Setters
 QString Student::getUsername() const { return username; }
 void Student::setUsername(const QString& uName) { username = uName; }

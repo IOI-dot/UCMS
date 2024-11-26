@@ -1,0 +1,3 @@
+Event Title: Workshop, Description: Learn Python basic, Date: 2024-12-15, Guest Speakers: [Jane Smith], CRN: 101
+Event Title: cience Conference, Description: Advanced data science topics, Date: 2025-01-10, Guest Speakers: [], CRN: 103
+Event Title: T, Description: T, Date: T, Guest Speakers: [T], CRN: 0

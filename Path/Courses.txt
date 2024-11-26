@@ -1,0 +1,5 @@
+MATH101|Calculus I|Mathematics|Dr. Emily White|Mon, Wed, Fri 11:00-12:00|None
+CS101|Introduction to Computer Science|Computer Science|Prof. John Doe|Mon, Wed 09:00-10:30|None
+CS102|Data Structures|Computer Science|Prof. Jane Smith|Tue, Thu 10:00-11:30|CS101
+MATH102|Linear Algebra|Mathematics|Dr. Sarah Brown|Mon, Wed, Fri 09:00-10:00|MATH101
+PHYS101|Introduction to Physics|Physics|Dr. Alan Green|Tue, Thu 11:00-12:30|MATH101

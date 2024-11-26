@@ -30,6 +30,8 @@ student_homepage::~student_homepage()
 
 void student_homepage::on_course_regis_pushButton_clicked()
 {
+    // Get the logged-in student
+    Student* loggedInStudent = Student::getLoggedInStudent();
     hide();
     Student_Course_Registration *student_course_registration = new Student_Course_Registration(this, loggedInStudent);
     student_course_registration->show();

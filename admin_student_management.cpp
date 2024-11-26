@@ -58,6 +58,7 @@ void admin_student_management::onAddStudentClicked() {
     // Check if the course exists in the course list
     bool courseExists = false;
     for (const Course& course : Course::courseList) {
+        qDebug()<<course.getCourseID();
         if (course.getCourseID() == courseCRN) {
             courseExists = true;
             break;  // Course found, no need to continue searching
