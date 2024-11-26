@@ -320,7 +320,6 @@ QVector<Event> File_Manager::loadEventData() {
 
     qDebug() << "Successfully loaded" << events.size() << "events from the file:" << EventFilePath;
 
-    // Optionally, you can assign the loaded events to a static member of the Event class if needed
     Event::eventList = events; // Store the loaded data in the static event list of the Event class
 
     return events;  // Return the vector of loaded events
