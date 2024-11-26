@@ -18,7 +18,6 @@ Student::Student(const QString& uName, const QString& mail, const QString& ID,
 }
 
 QVector<QString> Student::getCompletedPrerequisites() const {
-    qDebug() << "Getting" << completedPrerequisites.join(", ");
     return completedPrerequisites;
 }
 QVector<QString> Student::currentStudentPrerequisites;
